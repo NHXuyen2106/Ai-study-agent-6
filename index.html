@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0">
+<meta name="theme-color" content="#0B1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>AI Study Agent 6</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"AI Study Agent 6","short_name":"Agent 6","start_url":".","display":"standalone","background_color":"%230B1220","theme_color":"%230B1220","orientation":"portrait","lang":"vi","icons":[{"src":"data:image/svg+xml;utf8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 192 192%27%3E%3Crect width=%27192%27 height=%27192%27 rx=%2740%27 fill=%27%230B1220%27/%3E%3Ccircle cx=%2796%27 cy=%2796%27 r=%2750%27 fill=%27%232F7DF6%27/%3E%3Ctext x=%2796%27 y=%27125%27 font-size=%2780%27 text-anchor=%27middle%27%3E%F0%9F%A4%96%3C/text%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml","purpose":"any maskable"}]}'>
+
+<style>
+:root{
+  --bg-0:#05080F; --bg-1:#0B1220; --bg-2:#111A2E; --bg-3:#1A2440;
+  --border:#25335B;
+  --blue:#2F7DF6; --blue-2:#1E5FD6; --blue-soft:#5B9BFF;
+  --blue-glow:rgba(47,125,246,.45);
+  --yellow:#FFD43B; --yellow-2:#F5B800; --yellow-soft:#FFE38A;
+  --text:#F5F9FF; --text-2:#C7D2E5; --text-3:#8A98B5;
+  --success:#22C55E; --danger:#EF4444; --purple:#8E24AA;
+  --shadow:0 6px 24px rgba(0,0,0,.35);
+  --fs-base:16px;
+}
+[data-theme="light"]{
+  --bg-0:#F2F6FF; --bg-1:#FFFFFF; --bg-2:#EAF1FF; --bg-3:#DCE8FF;
+  --border:#B9CBF0; --text:#0A1733; --text-2:#2A3A63; --text-3:#5A6A93;
+  --shadow:0 6px 24px rgba(30,70,180,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{
+  background:var(--bg-0);color:var(--text);
+  font-family:'Segoe UI',-apple-system,Roboto,'Noto Sans',sans-serif;
+  font-size:var(--fs-base);line-height:1.55;min-height:100vh;
+  transition:background .3s,color .3s,font-size .2s;
+}
+body{
+  background-image:
+    radial-gradient(1000px 500px at 10% -10%, rgba(47,125,246,.20), transparent 60%),
+    radial-gradient(900px 500px at 110% 110%, rgba(255,212,59,.14), transparent 60%);
+  background-attachment:fixed;
+}
+#zoomBar{position:fixed;right:14px;bottom:96px;z-index:900;display:flex;flex-direction:column;gap:8px}
+#zoomBar button{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--bg-2);color:var(--text);border:2px solid var(--border);
+  font-size:20px;font-weight:800;cursor:pointer;box-shadow:var(--shadow);
+  transition:transform .15s,background .2s;
+}
+#zoomBar button:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+#zoomBar button:active{transform:scale(.9)}
+.auth-screen{
+  position:fixed;inset:0;z-index:9998;
+  display:flex;align-items:center;justify-content:center;
+  background:
+    radial-gradient(900px 500px at 20% 10%, rgba(47,125,246,.35), transparent 60%),
+    radial-gradient(900px 500px at 80% 90%, rgba(255,212,59,.25), transparent 60%),
+    linear-gradient(160deg,#05080F 0%,#0B1220 50%,#16224A 100%);
+  padding:20px;overflow-y:auto;
+}
+.auth-box{
+  background:var(--bg-1);border:2px solid var(--border);
+  border-radius:24px;padding:28px 24px;
+  max-width:420px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  animation:fadeIn .4s;
+}
+.auth-logo{
+  width:90px;height:90px;margin:0 auto 16px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:44px;
+  box-shadow:0 0 40px var(--blue-glow),0 0 0 6px rgba(255,212,59,.15);
+  animation:float 2.6s ease-in-out infinite;
+}
+.bot-six{position:relative;display:inline-block;width:42px;height:58px;flex-shrink:0;filter:drop-shadow(0 0 7px rgba(91,155,255,.9))}
+.bot-six .seg{position:absolute;background:#8cbcff;border-radius:5px;box-shadow:0 0 8px #2f7df6,0 0 16px rgba(47,125,246,.8)}
+.bot-six .a,.bot-six .g,.bot-six .d{left:16%;width:68%;height:10%}
+.bot-six .a{top:0}.bot-six .g{top:45%}.bot-six .d{bottom:0}
+.bot-six .b,.bot-six .c,.bot-six .e,.bot-six .f{width:12%;height:31%}
+.bot-six .f{top:8%;left:5%}.bot-six .b{top:8%;right:5%}
+.bot-six .e{bottom:8%;left:5%}.bot-six .c{bottom:8%;right:5%}
+.auth-logo .bot-six{width:44px;height:62px}
+.avatar .bot-six{width:27px;height:38px;filter:drop-shadow(0 0 4px rgba(91,155,255,.9))}
+.msg .who .bot-six{width:23px;height:32px;filter:drop-shadow(0 0 4px rgba(91,155,255,.9))}
+.bot-six .seg{border-radius:3px}
+.timer-display{font-family:'Courier New',monospace;font-size:42px;font-weight:900;letter-spacing:3px;text-align:center;color:var(--yellow);text-shadow:0 0 16px rgba(255,212,59,.4);padding:10px}
+.timer-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.timer-controls .btn{flex:1}
+.session-delete{padding:7px 10px;border:1px solid rgba(239,68,68,.55);border-radius:9px;background:rgba(239,68,68,.12);color:#ff9b9b;font-weight:800;cursor:pointer}
+.auth-title{text-align:center;font-size:24px;font-weight:900;letter-spacing:.4px;margin-bottom:4px}
+.auth-title span{color:var(--yellow)}
+.auth-sub{text-align:center;font-size:13.5px;color:var(--text-3);margin-bottom:22px}
+.avatar-picker{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;margin-bottom:14px;justify-content:center}
+.avatar-picker button{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--bg-2);border:2px solid var(--border);
+  font-size:22px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.avatar-picker button:hover{border-color:var(--blue)}
+.avatar-picker button.selected{
+  border-color:var(--yellow);
+  background:linear-gradient(135deg,rgba(255,212,59,.15),transparent);
+  box-shadow:0 0 12px rgba(255,212,59,.35);
+}
+.hidden{display:none !important}
+.header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(11,18,32,.94);backdrop-filter:blur(14px);
+  border-bottom:2px solid var(--border);
+  padding:12px 16px;
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+}
+[data-theme="light"] .header{background:rgba(255,255,255,.94)}
+.header-left{display:flex;align-items:center;gap:12px;min-width:0}
+.avatar{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  box-shadow:0 0 0 3px var(--yellow),var(--shadow);
+  flex-shrink:0;position:relative;cursor:pointer;
+}
+.avatar .pulse-dot{
+  position:absolute;bottom:-2px;right:-2px;
+  width:14px;height:14px;border-radius:50%;
+  background:var(--success);border:2px solid var(--bg-1);
+  box-shadow:0 0 10px var(--success);
+  animation:pulse 1.4s infinite;
+}
+.header-info{min-width:0;display:flex;flex-direction:column;gap:1px}
+.app-name{font-weight:900;font-size:14.5px;color:var(--yellow);letter-spacing:.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.greeting{font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sub{font-size:12px;color:var(--text-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.header-right{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{
+  width:42px;height:42px;border-radius:14px;
+  background:var(--bg-2);border:2px solid var(--border);
+  color:var(--text);font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .15s,background .2s,border-color .2s;
+}
+.icon-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff;transform:translateY(-2px)}
+.icon-btn:active{transform:scale(.92)}
+.icon-btn.on{background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440;border-color:var(--yellow)}
+.clock-strip{
+  background:linear-gradient(135deg,#0F1B36,#16224A);
+  border-bottom:2px solid var(--border);
+  padding:10px 16px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-weight:800;font-size:14px;color:var(--text-2);
+  gap:10px;flex-wrap:wrap;
+}
+.clock-strip .left-col{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.clock-strip .clk{
+  font-family:'Courier New',monospace;
+  font-size:20px;font-weight:900;color:var(--yellow);
+  letter-spacing:1.5px;text-shadow:0 0 12px rgba(255,212,59,.5);
+}
+.clock-strip .tz{
+  font-size:11px;color:var(--yellow);
+  background:rgba(255,212,59,.12);
+  padding:3px 8px;border-radius:12px;
+  border:1px solid rgba(255,212,59,.3);
+  font-weight:800;letter-spacing:.5px;
+}
+.clock-strip .date{font-size:13px;color:var(--blue-soft);font-weight:700}
+.clock-strip .badge{
+  background:var(--bg-2);border:1px solid var(--border);
+  padding:4px 10px;border-radius:20px;font-size:12px;color:var(--text-3);
+  display:flex;align-items:center;gap:6px;
+}
+.clock-strip .badge.on{background:rgba(34,197,94,.15);color:#7EE4A2;border-color:rgba(34,197,94,.4)}
+.clock-strip .badge .live{
+  width:8px;height:8px;border-radius:50%;background:var(--success);
+  animation:pulse 1.4s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 var(--success)}50%{opacity:.6;box-shadow:0 0 0 6px rgba(34,197,94,0)}}
+.main{max-width:820px;margin:0 auto;padding:18px 16px 130px}
+.tab{display:none}
+.tab.active{display:block;animation:fadeIn .35s ease}
+.hero{
+  background:linear-gradient(135deg,#0F1B36,#16224A);
+  border:2px solid var(--border);border-radius:22px;
+  padding:22px;margin-bottom:16px;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";position:absolute;inset:-50% -20% auto auto;
+  width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,212,59,.25),transparent 65%);
+  pointer-events:none;
+}
+.hero h2{font-size:21px;margin-bottom:6px;letter-spacing:.3px}
+.hero h2 span{color:var(--yellow)}
+.hero p{color:var(--text-2);font-size:14.5px}
+.hero-actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.hero-actions button{
+  padding:12px 18px;border-radius:12px;border:none;
+  font-weight:800;font-size:14.5px;cursor:pointer;
+  transition:transform .15s;font-family:inherit;
+}
+.hero-actions .primary{background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440}
+.hero-actions .ghost{background:transparent;color:var(--blue-soft);border:2px solid var(--blue)}
+.hero-actions button:active{transform:scale(.96)}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px}
+.stat{
+  background:var(--bg-1);border:2px solid var(--border);border-radius:18px;
+  padding:14px;position:relative;overflow:hidden;cursor:pointer;
+  transition:transform .2s,border-color .2s;
+}
+.stat:hover{transform:translateY(-3px);border-color:var(--blue)}
+.stat:active{transform:scale(.98)}
+.stat .ic{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px}
+.stat.blue .ic{background:linear-gradient(135deg,var(--blue),var(--blue-2));box-shadow:0 4px 14px var(--blue-glow)}
+.stat.yellow .ic{background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440}
+.stat.navy .ic{background:linear-gradient(135deg,#1A2440,#05080F);border:2px solid var(--border)}
+.stat.val{background:linear-gradient(135deg,var(--blue-2),#0B1220);border-color:var(--blue)}
+.stat .v{font-size:26px;font-weight:900;letter-spacing:.4px}
+.stat .l{font-size:12.5px;color:var(--text-3);margin-top:2px;font-weight:600}
+.card{
+  background:var(--bg-1);border:2px solid var(--border);border-radius:20px;
+  padding:18px;margin-bottom:14px;box-shadow:var(--shadow);
+}
+.card.eye{background:linear-gradient(135deg,#132049,#0B1220);border-color:var(--yellow)}
+.card.blue-glow{border-color:var(--blue)}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap}
+.card-head h3{font-size:16.5px;font-weight:800;letter-spacing:.2px;display:flex;align-items:center;gap:8px}
+.card-head h3 .dot{width:10px;height:10px;border-radius:50%;background:var(--yellow);box-shadow:0 0 12px var(--yellow)}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px 18px;border-radius:14px;border:none;
+  font-size:15.5px;font-weight:800;font-family:inherit;
+  cursor:pointer;transition:transform .15s,box-shadow .2s;
+}
+.btn:active{transform:scale(.96)}
+.btn-blue{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;box-shadow:0 6px 20px var(--blue-glow)}
+.btn-yellow{background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440;box-shadow:0 6px 20px rgba(255,212,59,.35)}
+.btn-ghost{background:transparent;color:var(--blue-soft);border:2px solid var(--blue)}
+.btn-danger{background:linear-gradient(135deg,#EF4444,#B91C1C);color:#fff}
+.btn-full{width:100%}
+.btn-sm{padding:9px 13px;font-size:13px;border-radius:10px}
+.chat-wrap{display:flex;flex-direction:column;height:calc(100dvh - 250px);min-height:440px}
+.chat-body{flex:1;overflow-y:auto;padding:6px 4px;display:flex;flex-direction:column;gap:14px}
+.msg{display:flex;gap:10px;align-items:flex-start}
+.msg.me{flex-direction:row-reverse}
+.msg .who{
+  width:40px;height:40px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;
+}
+.msg.ai .who{background:linear-gradient(135deg,var(--blue),var(--blue-2))}
+.msg.me .who{background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440}
+.msg .bub{
+  background:var(--bg-2);padding:13px 16px;border-radius:16px;
+  max-width:78%;font-size:15.5px;line-height:1.6;
+  white-space:pre-wrap;word-break:break-word;border:2px solid var(--border);
+}
+.msg.ai .bub{border-color:rgba(47,125,246,.5)}
+.msg.me .bub{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border-color:var(--blue)}
+.msg .bub b{color:var(--yellow)}
+.msg.me .bub b{color:#FFF6C8}
+.msg .bub code{background:rgba(0,0,0,.35);padding:2px 6px;border-radius:6px;font-size:14px}
+.quick-row{display:flex;gap:8px;overflow-x:auto;padding:10px 0;scrollbar-width:none}
+.quick-row::-webkit-scrollbar{display:none}
+.quick-row button{
+  flex-shrink:0;background:var(--bg-2);color:var(--blue-soft);
+  border:2px solid var(--border);padding:9px 13px;border-radius:20px;
+  font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:transform .15s,border-color .2s,color .2s;white-space:nowrap;
+}
+.quick-row button:hover{border-color:var(--yellow);color:var(--yellow)}
+.quick-row button:active{transform:scale(.95)}
+.chat-input{display:flex;gap:8px;align-items:center;background:var(--bg-2);border:2px solid var(--border);border-radius:20px;padding:8px}
+.chat-input:focus-within{border-color:var(--blue)}
+.chat-input input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:16px;padding:10px 12px;font-family:inherit}
+.send{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440;border:none;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.send:active{transform:scale(.9)}
+.mic{width:48px;height:48px;border-radius:16px;background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;border:none;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mic:active{transform:scale(.9)}
+.mic.listening{animation:pulse 1.1s infinite;background:var(--danger)}
+.field{width:100%;padding:13px 16px;border-radius:14px;background:var(--bg-2);border:2px solid var(--border);color:var(--text);font-size:15.5px;font-family:inherit;outline:none;margin-bottom:10px;transition:border-color .2s}
+.field:focus{border-color:var(--blue);background:var(--bg-3)}
+label{display:block;font-size:14px;color:var(--text-2);font-weight:700;margin-bottom:5px;margin-top:6px}
+select.field{cursor:pointer}
+.row{display:flex;gap:10px}
+.row>*{flex:1}
+.goal{padding:13px;border-radius:14px;background:var(--bg-2);border-left:5px solid var(--yellow);margin-bottom:10px}
+.goal .title{font-weight:800;margin-bottom:6px;font-size:15px}
+.bar{height:10px;background:var(--bg-3);border-radius:8px;overflow:hidden}
+.bar .fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .6s ease}
+.goal .meta{display:flex;justify-content:space-between;font-size:12.5px;color:var(--text-3);margin-top:5px}
+.goal .acts{margin-top:10px;display:flex;gap:8px}
+.rem{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:11px 13px;background:var(--bg-2);border-radius:12px;border-left:5px solid var(--blue);margin-bottom:8px;font-size:14.5px}
+.vocab-item{padding:13px;background:var(--bg-2);border-radius:14px;border-left:5px solid var(--yellow);margin-bottom:10px}
+.vocab-item .w{font-weight:900;color:var(--yellow);font-size:18px}
+.vocab-item .ipa{font-size:12.5px;color:var(--text-3);margin-bottom:5px;font-style:italic}
+.vocab-item .mn{font-size:14.5px;margin-bottom:4px}
+.vocab-item .ex{font-size:13px;color:var(--text-2);font-style:italic;padding-left:10px;border-left:3px solid var(--border)}
+.flash{width:100%;height:190px;perspective:1200px;cursor:pointer;margin-bottom:14px}
+.flash .inner{position:relative;width:100%;height:100%;transition:transform .6s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d}
+.flash.flip .inner{transform:rotateY(180deg)}
+.flash .front,.flash .back{
+  position:absolute;inset:0;border-radius:20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:22px;text-align:center;backface-visibility:hidden;
+  font-size:22px;font-weight:800;letter-spacing:.4px;
+}
+.flash .front{background:linear-gradient(135deg,var(--blue),var(--blue-2));color:#fff;box-shadow:0 0 40px var(--blue-glow)}
+.flash .back{background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440;transform:rotateY(180deg)}
+.flash .back small{display:block;font-weight:600;font-size:14px;margin-top:8px;opacity:.75}
+.grade-card{
+  padding:16px;border-radius:16px;margin-bottom:12px;
+  background:linear-gradient(135deg,var(--blue-2),#0B1220);border:2px solid var(--blue);
+}
+.grade-card.gold{background:linear-gradient(135deg,#F5B800,#8a6400);border-color:var(--yellow)}
+.grade-card.silver{background:linear-gradient(135deg,#94a3b8,#475569);border-color:#cbd5e1}
+.grade-card.bronze{background:linear-gradient(135deg,#b45309,#78350f);border-color:#f59e0b}
+.grade-card.red{background:linear-gradient(135deg,#b91c1c,#7f1d1d);border-color:#ef4444}
+.grade-card .big{font-size:42px;font-weight:900;line-height:1;margin-bottom:6px}
+.grade-card .lab{font-size:14px;font-weight:700;opacity:.9;margin-bottom:6px}
+.grade-card .desc{font-size:13.5px;opacity:.9;line-height:1.5}
+.gpa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.gpa-cell{
+  background:var(--bg-2);border:2px solid var(--border);border-radius:14px;
+  padding:12px;text-align:center;
+}
+.gpa-cell .n{font-size:22px;font-weight:900;color:var(--yellow)}
+.gpa-cell .t{font-size:11.5px;color:var(--text-3);margin-top:2px;font-weight:600}
+.score-table{width:100%;border-collapse:collapse;background:var(--bg-2);border-radius:14px;overflow:hidden}
+.score-table th{
+  background:var(--bg-3);color:var(--yellow);
+  padding:10px 6px;font-size:12.5px;font-weight:800;
+  text-align:center;letter-spacing:.3px;
+  border-bottom:2px solid var(--border);
+}
+.score-table td{padding:8px 4px;text-align:center;border-bottom:1px solid var(--border);font-size:14px}
+.score-table tr:last-child td{border-bottom:none}
+.score-table td.sub-name{text-align:left;font-weight:700;padding-left:12px;min-width:90px;font-size:14px}
+.score-table input{
+  width:56px;padding:7px 4px;border-radius:8px;
+  background:var(--bg-3);border:2px solid var(--border);
+  color:var(--text);font-size:14px;font-weight:800;
+  text-align:center;font-family:inherit;outline:none;
+}
+.score-table input:focus{border-color:var(--yellow)}
+.score-table .avg-cell{font-weight:900;color:var(--yellow);font-size:15px}
+.weight-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.weight-cell{background:var(--bg-2);border:2px solid var(--border);border-radius:12px;padding:10px;text-align:center}
+.weight-cell .lbl{font-size:11.5px;color:var(--text-3);font-weight:700;margin-bottom:4px}
+.weight-cell input{
+  width:100%;padding:6px;border-radius:8px;
+  background:var(--bg-3);border:2px solid var(--border);
+  color:var(--yellow);font-size:15px;font-weight:900;
+  text-align:center;font-family:inherit;outline:none;
+}
+.weight-cell input:focus{border-color:var(--yellow)}
+.weight-note{font-size:12px;color:var(--text-3);text-align:center;margin-bottom:14px}
+.weight-note b{color:var(--yellow)}
+.add-sub-row{display:flex;gap:8px;margin-top:10px}
+.add-sub-row input{flex:1;padding:12px;border-radius:12px;background:var(--bg-2);border:2px solid var(--border);color:var(--text);font-family:inherit;font-size:14.5px;outline:none}
+.add-sub-row input:focus{border-color:var(--blue)}
+.lb-tabs{display:flex;gap:4px;background:var(--bg-2);border-radius:12px;padding:4px;margin-bottom:14px}
+.lb-tabs button{
+  flex:1;background:transparent;border:none;
+  padding:9px 4px;border-radius:9px;
+  font-weight:800;font-size:12.5px;
+  color:var(--text-3);cursor:pointer;font-family:inherit;
+  transition:all .2s;
+}
+.lb-tabs button.active{
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+  color:#fff;box-shadow:0 4px 14px var(--blue-glow);
+}
+.leader{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--bg-2);margin-bottom:8px;transition:transform .2s}
+.leader:hover{transform:translateX(4px)}
+.leader .rank{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:var(--bg-3);color:var(--text-2);flex-shrink:0}
+.leader.top1 .rank{background:linear-gradient(135deg,#FFD700,#F5B800);color:#1A2440;box-shadow:0 0 16px rgba(255,215,0,.5)}
+.leader.top2 .rank{background:linear-gradient(135deg,#E8EEFF,#A3B4DD);color:#1A2440}
+.leader.top3 .rank{background:linear-gradient(135deg,#F1B27A,#B46B2D);color:#fff}
+.leader.me{background:linear-gradient(90deg,rgba(255,212,59,.18),transparent);border:2px solid var(--yellow)}
+.leader .av{
+  width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;background:var(--bg-3);flex-shrink:0;
+  position:relative;
+}
+.leader .av .st{
+  position:absolute;bottom:0;right:0;width:12px;height:12px;border-radius:50%;
+  background:var(--success);border:2px solid var(--bg-2);
+}
+.leader .av .st.off{background:var(--text-3)}
+.leader .info{flex:1;min-width:0}
+.leader .name{font-weight:800;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.leader .tag{font-size:11px;color:var(--text-3);margin-top:2px}
+.leader .score{color:var(--yellow);font-weight:900;font-size:16px;text-align:right}
+.leader .score small{display:block;font-size:10.5px;color:var(--text-3);font-weight:600}
+.online-strip{
+  background:linear-gradient(135deg,#0F1B36,#16224A);
+  border:2px solid var(--blue);border-radius:16px;
+  padding:14px;margin-bottom:14px;position:relative;overflow:hidden;
+}
+.online-strip .live-badge{
+  position:absolute;top:10px;right:12px;
+  background:rgba(34,197,94,.18);color:#7EE4A2;
+  border:1px solid rgba(34,197,94,.45);
+  padding:3px 10px;border-radius:12px;
+  font-size:11px;font-weight:800;letter-spacing:.5px;
+  display:flex;align-items:center;gap:5px;
+}
+.online-strip .live-badge .live{
+  width:7px;height:7px;border-radius:50%;background:var(--success);
+  animation:pulse 1.4s infinite;
+}
+.online-strip h4{font-size:14px;color:var(--yellow);margin-bottom:10px;letter-spacing:.4px;font-weight:800}
+.user-list{display:flex;flex-wrap:wrap;gap:8px}
+.user-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--bg-2);border:1px solid var(--border);
+  padding:6px 12px;border-radius:20px;
+  font-size:12.5px;font-weight:700;
+  animation:fadeIn .3s;
+}
+.user-pill .av{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;background:var(--bg-3);
+}
+.user-pill .st{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success)}
+.user-pill .st.off{background:var(--text-3);box-shadow:none}
+.user-pill.you{background:linear-gradient(135deg,rgba(255,212,59,.18),rgba(255,212,59,.06));border-color:var(--yellow)}
+.user-pill .you-tag{font-size:10px;color:var(--yellow);font-weight:900}
+.user-pill.new{animation:newUserPulse 3s}
+@keyframes newUserPulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.7)}
+  50%{box-shadow:0 0 0 12px rgba(34,197,94,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+}
+.activity-feed{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.activity-item{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 12px;background:var(--bg-2);border-radius:12px;
+  border-left:4px solid var(--blue);font-size:13.5px;
+  animation:fadeIn .3s;
+}
+.activity-item.new-user{border-left-color:var(--yellow);background:linear-gradient(90deg,rgba(255,212,59,.12),var(--bg-2))}
+.activity-item .time{color:var(--yellow);font-weight:800;font-size:12px;min-width:52px;flex-shrink:0}
+.activity-item .txt{flex:1;color:var(--text-2);line-height:1.5}
+.feed-item{padding:13px;background:var(--bg-2);border-radius:12px;margin-bottom:10px;border-left:4px solid var(--blue)}
+.feed-item.welcome{border-left-color:var(--yellow);background:linear-gradient(90deg,rgba(255,212,59,.12),var(--bg-2))}
+.feed-item .head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.feed-item .av{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;background:var(--bg-3);
+}
+.feed-item .name{font-weight:800;color:var(--yellow);font-size:14px}
+.feed-item .time{font-size:11.5px;color:var(--text-3);margin-left:auto}
+.feed-item .content{font-size:14px;line-height:1.55;color:var(--text-2);margin-left:40px}
+.feed-item .actions{margin-left:40px;margin-top:8px;display:flex;gap:14px;font-size:12.5px;color:var(--text-3)}
+.feed-item .actions span{cursor:pointer;transition:color .2s}
+.feed-item .actions span:hover{color:var(--yellow)}
+.feed-input{display:flex;gap:8px;margin-top:10px}
+.feed-input input{flex:1;padding:12px;border-radius:12px;background:var(--bg-2);border:2px solid var(--border);color:var(--text);font-family:inherit;font-size:15px;outline:none}
+.feed-input input:focus{border-color:var(--blue)}
+.feed-input button{padding:12px 18px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440;font-weight:800;cursor:pointer;font-family:inherit}
+.modal{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;animation:fadeIn .25s}
+.modal-box{background:var(--bg-1);border:2px solid var(--border);border-radius:22px;padding:22px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal-box h3{font-size:18px;margin-bottom:14px}
+.voice-ui{text-align:center}
+.voice-orb{
+  width:140px;height:140px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blue),var(--blue-2));
+  margin:0 auto 20px;display:flex;align-items:center;justify-content:center;
+  font-size:56px;position:relative;animation:pulse 1.4s infinite;
+}
+.voice-ui .hint{color:var(--yellow);font-weight:700;font-size:15px;margin-bottom:14px}
+.nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:rgba(11,18,32,.96);backdrop-filter:blur(16px);
+  border-top:2px solid var(--border);
+  display:flex;justify-content:space-around;align-items:stretch;
+  padding:6px 4px max(6px,env(safe-area-inset-bottom));
+}
+[data-theme="light"] .nav{background:rgba(255,255,255,.96)}
+.nav button{
+  flex:1;background:none;border:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;padding:8px 2px;color:var(--text-3);cursor:pointer;
+  font-family:inherit;transition:color .2s,transform .15s;
+  border-radius:12px;position:relative;font-weight:700;
+}
+.nav button .em{font-size:22px;line-height:1}
+.nav button .lbl{font-size:10.5px;letter-spacing:.2px}
+.nav button:hover{color:var(--blue-soft)}
+.nav button.active{color:var(--yellow)}
+.nav button.active::after{
+  content:"";position:absolute;top:2px;width:26px;height:4px;border-radius:4px;
+  background:var(--yellow);box-shadow:0 0 12px var(--yellow);
+}
+.nav button:active{transform:scale(.94)}
+.status{padding:11px 13px;border-radius:12px;background:var(--bg-2);color:var(--text-2);font-size:14px;margin-top:10px;border-left:5px solid var(--border)}
+.status.ok{background:rgba(34,197,94,.12);color:#7EE4A2;border-left-color:var(--success)}
+.status.err{background:rgba(239,68,68,.14);color:#FFA3A3;border-left-color:var(--danger)}
+.empty{text-align:center;padding:22px 14px;color:var(--text-3);font-size:14px}
+.hint{font-size:13px;color:var(--text-3);margin-bottom:10px;line-height:1.55}
+.switch-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border);cursor:pointer;font-weight:700;font-size:15px}
+.switch-row input{width:52px;height:28px;accent-color:var(--yellow);cursor:pointer}
+.user-card{
+  display:flex;align-items:center;gap:14px;
+  padding:16px;background:var(--bg-2);
+  border-radius:16px;margin-bottom:12px;
+  border:2px solid var(--border);
+}
+.user-card .av{
+  width:64px;height:64px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;background:var(--bg-3);flex-shrink:0;
+  border:3px solid var(--yellow);
+}
+.user-card .info{flex:1;min-width:0}
+.user-card .name{font-size:18px;font-weight:900;margin-bottom:2px}
+.user-card .email{font-size:12.5px;color:var(--text-3);word-break:break-all}
+.user-card .joined{font-size:12px;color:var(--yellow);font-weight:700;margin-top:4px}
+@keyframes fadeIn{0%{opacity:0;transform:translateY(8px)}100%{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media(min-width:780px){
+  .stats-grid{grid-template-columns:repeat(4,1fr)}
+  .nav{max-width:860px;left:50%;transform:translateX(-50%);border-radius:22px 22px 0 0;border:2px solid var(--border);border-bottom:none}
+  .header{padding:14px 24px}
+}
+@media(max-width:360px){
+  :root{--fs-base:15px}
+  .stat .v{font-size:22px}
+  .clock-strip .clk{font-size:17px}
+  .score-table td.sub-name{font-size:12.5px;min-width:70px}
+  .score-table input{width:48px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<div class="auth-screen" id="authScreen">
+  <div class="auth-box">
+    <div class="auth-logo"><span class="bot-six" role="img" aria-label="Bot số 6"><i class="seg a"></i><i class="seg b"></i><i class="seg c"></i><i class="seg d"></i><i class="seg e"></i><i class="seg f"></i><i class="seg g"></i></span></div>
+    <div class="auth-title">AI Study <span>Agent 6</span></div>
+    <div class="auth-sub">Trợ lý học tập thông minh của bạn</div>
+    <label style="text-align:center">Nhập tên để vào app</label>
+    <input type="text" id="loginName" class="field" placeholder="VD: Minh Anh" maxlength="20" value="" autocomplete="off">
+    <button class="btn btn-yellow btn-full" style="margin-top:8px" onclick="App.authEnter()">🚀 Vào app</button>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app" class="hidden">
+  <header class="header">
+    <div class="header-left">
+      <div class="avatar" id="avatarEmoji"><span class="bot-six" role="img" aria-label="Bot số 6"><i class="seg a"></i><i class="seg b"></i><i class="seg c"></i><i class="seg d"></i><i class="seg e"></i><i class="seg f"></i><i class="seg g"></i></span><span class="pulse-dot"></span></div>
+      <div class="header-info">
+        <div class="app-name">⚡ AI STUDY AGENT 6</div>
+        <div class="greeting" id="greeting">Chào bạn!</div>
+        <div class="sub" id="userName">Học viên</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="icon-btn" id="btnVoiceTop" title="Nói chuyện">🎤</button>
+      <button class="icon-btn on" id="btnSpeak" title="Tắt/mở tiếng bot">🔊</button>
+      <button class="icon-btn" id="btnTheme" title="Sáng/Tối">🌙</button>
+    </div>
+  </header>
+
+  <div class="clock-strip">
+    <div class="left-col">
+      <div class="clk" id="clock">--:--:--</div>
+      <div class="tz">GMT+7</div>
+      <div class="date" id="dateLabel">—</div>
+    </div>
+    <div class="badge on" id="onlineBadge">
+      <span class="live"></span>
+      <span id="netText">🌐 Online</span>
+    </div>
+  </div>
+
+  <div id="zoomBar">
+    <button id="zoomIn">A+</button>
+    <button id="zoomOut">A−</button>
+  </div>
+
+  <main class="main">
+    <!-- HOME -->
+    <section class="tab active" data-tab="home">
+      <div class="hero">
+        <h2>Sẵn sàng học chưa, <span id="heroName">bạn</span>? 🚀</h2>
+        <p id="heroSub">Hôm nay mình gợi ý môn học phù hợp với bạn!</p>
+        <div class="hero-actions">
+          <button class="primary" onclick="App.go('chat')">💬 Trò chuyện AI</button>
+          <button class="ghost" onclick="App.quickLog()">⏱️ Ghi giờ học</button>
+        </div>
+      </div>
+      <div class="card blue-glow">
+        <div class="card-head"><h3><span class="dot"></span>👥 Góc chia sẻ</h3><button class="btn btn-sm btn-blue" onclick="App.go('community')">Mở cộng đồng</button></div>
+        <p class="hint" style="margin-bottom:0">Chia sẻ mục tiêu và mẹo học tập. Bài viết được lưu trên thiết bị này; ứng dụng hiện chưa kết nối người dùng trực tuyến.</p>
+      </div>
+      <div class="card eye">
+        <div class="card-head">
+          <h3><span class="dot"></span>📚 Gợi ý môn học lúc này</h3>
+          <button class="btn btn-sm btn-yellow" onclick="App.updateTodaySuggest()">Làm mới</button>
+        </div>
+        <div id="todaySuggest"></div>
+      </div>
+      <div class="stats-grid">
+        <div class="stat blue" onclick="App.go('chat')">
+          <div class="ic">⏱️</div>
+          <div class="v" id="sTime">0p</div>
+          <div class="l">Học hôm nay</div>
+        </div>
+        <div class="stat yellow" onclick="App.showStreakInfo()">
+          <div class="ic">🔥</div>
+          <div class="v" id="sStreak">0</div>
+          <div class="l">Chuỗi ngày</div>
+        </div>
+        <div class="stat val" onclick="App.go('plan')">
+          <div class="ic">🎯</div>
+          <div class="v" id="sGoals">0%</div>
+          <div class="l">Mục tiêu</div>
+        </div>
+        <div class="stat navy" onclick="App.go('score')">
+          <div class="ic">📊</div>
+          <div class="v" id="sGPA">--</div>
+          <div class="l">GPA</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3><span class="dot"></span>Tiến độ 7 ngày (phút)</h3></div>
+        <canvas id="chart" height="170" style="width:100%"></canvas>
+      </div>
+      <div class="card blue-glow">
+        <div class="card-head">
+          <h3><span class="dot"></span>Gợi ý hôm nay</h3>
+          <button class="btn btn-sm btn-yellow" onclick="App.refreshSuggest()">Làm mới</button>
+        </div>
+        <div id="suggest" style="font-size:14.5px;white-space:pre-wrap;line-height:1.65">Đang phân tích...</div>
+      </div>
+      <div class="card blue-glow">
+        <div class="card-head"><h3><span class="dot"></span>⏳ Bộ đếm giờ học</h3></div>
+        <p class="hint">Đặt thời gian tập trung. Khi hết giờ, app sẽ phát tiếng bíp báo hiệu.</p>
+        <label for="timerMinutes">Thời lượng (phút)</label>
+        <input id="timerMinutes" class="field" type="number" min="1" max="180" value="25" inputmode="numeric">
+        <div id="timerDisplay" class="timer-display" role="timer" aria-live="polite">25:00</div>
+        <div class="timer-controls">
+          <button class="btn btn-blue" id="timerStart" onclick="App.startTimer()">▶ Bắt đầu</button>
+          <button class="btn btn-ghost" onclick="App.resetTimer()">↺ Đặt lại</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3><span class="dot"></span>Lịch học hôm nay</h3>
+          <button class="btn btn-sm btn-blue" onclick="App.quickLog()">+ Ghi giờ</button>
+        </div>
+        <div id="todayList"></div>
+      </div>
+    </section>
+
+    <!-- CHAT -->
+    <section class="tab" data-tab="chat">
+      <div class="chat-wrap">
+        <div class="chat-body" id="chatBody">
+          <div class="msg ai">
+            <div class="who"><span class="bot-six" role="img" aria-label="Bot số 6"><i class="seg a"></i><i class="seg b"></i><i class="seg c"></i><i class="seg d"></i><i class="seg e"></i><i class="seg f"></i><i class="seg g"></i></span></div>
+            <div class="bub">Xin chào! Mình là <b>AI Study Agent 6</b> 🎓<br><br>Mình có thể:<br>• <b>Phân tích</b> thói quen học tập<br>• <b>Giải bài</b> từng bước<br>• <b>Lập kế hoạch</b> cá nhân hóa<br>• <b>Tính điểm</b> giữa kì - cuối kì - thi<br>• <b>Gợi ý từ vựng</b> theo ngữ cảnh<br><br>Bạn muốn bắt đầu với gì?</div>
+          </div>
+        </div>
+        <div class="quick-row">
+          <button data-q="Phân tích thói quen học tập của tôi">📊 Phân tích</button>
+          <button data-q="Gợi ý môn học phù hợp lúc này">📚 Môn học</button>
+          <button data-q="Hướng dẫn tính điểm giữa kì cuối kì điểm thi">🧮 Tính điểm</button>
+          <button data-q="Giải thích định lý Pythagore kèm ví dụ">💡 Giải bài</button>
+          <button data-q="Động viên tôi một câu">❤️ Động viên</button>
+        </div>
+        <div class="chat-input">
+          <button class="mic" id="micChat">🎤</button>
+          <input type="text" id="chatInput" placeholder="Nhập câu hỏi..." autocomplete="off">
+          <button class="send" id="btnSend">➤</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCORE -->
+    <section class="tab" data-tab="score">
+      <div class="card">
+        <div class="card-head"><h3><span class="dot"></span>🧮 Bảng điểm</h3><button class="btn btn-sm btn-blue" onclick="App.addSubject()">＋ Thêm môn</button></div>
+        <p class="hint">Nhập điểm hệ 10. Điểm trung bình được tính theo trọng số giữa kỳ, cuối kỳ và điểm thi.</p>
+        <div class="weight-row">
+          <div class="weight-cell"><div class="lbl">GIỮA KỲ (%)</div><input id="weightMid" type="number" min="0" max="100" value="30" onchange="App.saveWeights()"></div>
+          <div class="weight-cell"><div class="lbl">CUỐI KỲ (%)</div><input id="weightFinal" type="number" min="0" max="100" value="30" onchange="App.saveWeights()"></div>
+          <div class="weight-cell"><div class="lbl">ĐIỂM THI (%)</div><input id="weightExam" type="number" min="0" max="100" value="40" onchange="App.saveWeights()"></div>
+        </div>
+        <div id="weightNote" class="weight-note"></div>
+        <div class="gpa-grid"><div class="gpa-cell"><div class="n" id="gpaAverage">—</div><div class="t">ĐIỂM TB</div></div><div class="gpa-cell"><div class="n" id="gpaSubjects">0</div><div class="t">SỐ MÔN</div></div><div class="gpa-cell"><div class="n" id="gpaRank">—</div><div class="t">XẾP LOẠI</div></div></div>
+        <div id="scoreTableWrap"></div>
+      </div>
+    </section>
+    <!-- COMMUNITY -->
+    <section class="tab" data-tab="community">
+      <div class="card"><div class="card-head"><h3><span class="dot"></span>👥 Góc chia sẻ</h3></div>
+        <p class="hint">Bài viết chỉ được lưu trên thiết bị này; đây chưa phải cộng đồng trực tuyến.</p>
+        <div class="feed-input"><input id="communityInput" maxlength="240" placeholder="Chia sẻ mục tiêu hoặc mẹo học tập..."><button onclick="App.addPost()">Đăng</button></div>
+        <div id="communityPosts" style="margin-top:14px"></div>
+      </div>
+    </section>
+    <!-- PROFILE -->
+    <section class="tab" data-tab="profile">
+      <div class="card"><div class="card-head"><h3><span class="dot"></span>👤 Hồ sơ học tập</h3></div><div id="profileContent"></div><div class="avatar-picker" id="profileAvatarPicker" aria-label="Chọn avatar hồ sơ"></div></div>
+    </section>
+    <!-- PLAN -->
+    <section class="tab" data-tab="plan">
+      <div class="card"><div class="card-head"><h3><span class="dot"></span>📅 Mục tiêu học tập</h3></div>
+        <div class="row"><input id="planTitle" class="field" placeholder="Ví dụ: Ôn Toán 5 buổi" maxlength="60"><input id="planTarget" class="field" type="number" min="1" value="5" placeholder="Mục tiêu"></div>
+        <button class="btn btn-blue btn-full" onclick="App.addGoal()">＋ Thêm mục tiêu</button>
+        <div id="planList" style="margin-top:14px"></div>
+      </div>
+    </section>
+    <!-- VOCAB -->
+    <section class="tab" data-tab="vocab">
+      <div class="card"><div class="card-head"><h3><span class="dot"></span>📚 Sổ từ vựng</h3><button class="btn btn-sm btn-yellow" onclick="App.quizVocab()">🎴 Ôn tập</button></div>
+        <div class="row"><input id="vocabWord" class="field" placeholder="Từ / cụm từ" maxlength="60"><input id="vocabMeaning" class="field" placeholder="Nghĩa" maxlength="120"></div>
+        <input id="vocabExample" class="field" placeholder="Câu ví dụ (không bắt buộc)" maxlength="180">
+        <button class="btn btn-blue btn-full" onclick="App.addVocab()">＋ Lưu từ mới</button>
+        <div id="vocabList" style="margin-top:14px"></div>
+      </div>
+    </section>
+    <!-- SETTINGS -->
+    <section class="tab" data-tab="settings">
+      <div class="card"><div class="card-head"><h3><span class="dot"></span>⚙️ Cài đặt</h3></div>
+        <label for="settingsName" id="settingsNameLabel">Tên hiển thị</label><input id="settingsName" class="field" maxlength="20" placeholder="Tên của bạn">
+        <button id="saveNameButton" class="btn btn-blue btn-full" onclick="App.saveProfile()">Lưu tên</button>
+        <div class="switch-row" onclick="App.toggleTheme()"><span id="themeSettingText">🌗 Giao diện sáng / tối</span><button class="btn btn-sm btn-ghost" type="button" id="themeSettingLabel">Đổi giao diện</button></div>
+        <div class="switch-row"><span id="fontSizeText">🔎 Cỡ chữ</span><span><button class="btn btn-sm btn-ghost" onclick="App.zoom(-1)">A−</button> <button class="btn btn-sm btn-ghost" onclick="App.zoom(1)">A+</button></span></div>
+        <div class="switch-row" onclick="App.toggleSpeech()"><span id="speechSettingText">🔊 Đọc phản hồi chat</span><input id="speechSetting" type="checkbox" onclick="event.stopPropagation();App.toggleSpeech(this.checked)"></div>
+        <p class="hint" style="margin-top:12px">Dữ liệu được lưu trong trình duyệt trên thiết bị này. Xóa dữ liệu sẽ không thể khôi phục.</p>
+        <label for="languageSelect" id="languageLabel">🌐 Ngôn ngữ giao diện</label>
+        <select id="languageSelect" class="field" onchange="App.setLanguage(this.value)">
+          <option value="vi">Tiếng Việt</option><option value="en">English</option><option value="zh">中文（简体）</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="hi">हिन्दी</option><option value="bn">বাংলা</option><option value="ur">اردو</option><option value="ar">العربية</option><option value="fa">فارسی</option><option value="tr">Türkçe</option><option value="th">ไทย</option><option value="id">Bahasa Indonesia</option><option value="ms">Bahasa Melayu</option><option value="fil">Filipino</option><option value="km">ខ្មែរ</option><option value="lo">ລາວ</option><option value="my">မြန်မာ</option><option value="ne">नेपाली</option>
+        </select>
+        <button id="clearDataButton" class="btn btn-danger btn-full" onclick="App.clearLocalData()">🗑️ Xóa dữ liệu học tập</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="nav" id="nav">
+    <button class="active" data-tab="home"><span class="em">🏠</span><span class="lbl" data-nav-label="home">Trang chủ</span></button>
+    <button data-tab="chat"><span class="em">💬</span><span class="lbl" data-nav-label="chat">Chat AI</span></button>
+    <button data-tab="score"><span class="em">🧮</span><span class="lbl" data-nav-label="score">Điểm</span></button>
+    <button data-tab="community"><span class="em">👥</span><span class="lbl" data-nav-label="community">Cộng đồng</span></button>
+    <button data-tab="plan"><span class="em">📅</span><span class="lbl" data-nav-label="plan">Kế hoạch</span></button>
+    <button data-tab="vocab"><span class="em">📚</span><span class="lbl" data-nav-label="vocab">Từ vựng</span></button>
+    <button data-tab="profile"><span class="em">👤</span><span class="lbl" data-nav-label="profile">Hồ sơ</span></button>
+    <button data-tab="settings"><span class="em">⚙️</span><span class="lbl" data-nav-label="settings">Cài đặt</span></button>
+  </nav>
+</div>
+
+<!-- VOICE MODAL -->
+<div class="modal hidden" id="voiceModal">
+  <div class="modal-box voice-ui">
+    <div class="voice-orb">🎤</div>
+    <div class="hint">Đang nghe... Hãy nói rõ ràng</div>
+    <div id="voiceText" style="font-size:16px;margin-bottom:16px;min-height:24px;color:var(--text-2)">—</div>
+    <button class="btn btn-blue btn-full" onclick="App.stopVoice()">Dừng</button>
+  </div>
+</div>
+
+<div class="modal hidden" id="gModal">
+  <div class="modal-box">
+    <h3 id="gTitle"></h3>
+    <div id="gBody"></div>
+    <button class="btn btn-ghost btn-full" style="margin-top:12px" onclick="App.closeModal()">Đóng</button>
+  </div>
+</div>
+
+<script>
+// ==================== TIME GMT+7 ====================
+const TZ_OFFSET = 7;
+const TimeVN = {
+  now(){
+    const utc = Date.now() + (new Date().getTimezoneOffset() * 60000);
+    return new Date(utc + TZ_OFFSET * 3600000);
+  },
+  format(date, opts={}){ return new Intl.DateTimeFormat('vi-VN', {timeZone:'Asia/Ho_Chi_Minh', ...opts}).format(date); },
+  clockString(d){
+    const dd = d || this.now();
+    return `${String(dd.getHours()).padStart(2,'0')}:${String(dd.getMinutes()).padStart(2,'0')}:${String(dd.getSeconds()).padStart(2,'0')}`;
+  },
+  dateString(d){
+    const dd = d || this.now();
+    const language = localStorage.getItem('agent6_language') || 'vi';
+    const days = language==='en' ? ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] : ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+    return `${days[dd.getDay()]}, ${String(dd.getDate()).padStart(2,'0')}/${String(dd.getMonth()+1).padStart(2,'0')}/${dd.getFullYear()}`;
+  },
+  shortDate(d){ return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'/'+d.getFullYear(); },
+  hourNow(){ return this.now().getHours(); },
+  minuteNow(){ return this.now().getMinutes(); }
+};
+
+// 18 Asian interface languages: Vietnamese plus 17 additional languages.
+const UI_TEXT = {
+  en:['Home','AI Chat','Grades','Community','Plan','Vocabulary','Profile','Settings','Display name','Save name','🌗 Light / dark theme','Change theme','🔎 Font size','🔊 Read chat replies','🌐 Interface language','🗑️ Delete study data'],
+  vi:['Trang chủ','Chat AI','Điểm','Cộng đồng','Kế hoạch','Từ vựng','Hồ sơ','Cài đặt','Tên hiển thị','Lưu tên','🌗 Giao diện sáng / tối','Đổi giao diện','🔎 Cỡ chữ','🔊 Đọc phản hồi chat','🌐 Ngôn ngữ giao diện','🗑️ Xóa dữ liệu học tập'],
+  zh:['首页','AI 聊天','成绩','社区','计划','词汇','个人资料','设置','显示名称','保存名称','🌗 浅色 / 深色主题','切换主题','🔎 字体大小','🔊 朗读聊天回复','🌐 界面语言','🗑️ 删除学习数据'],
+  ja:['ホーム','AIチャット','成績','コミュニティ','学習計画','単語','プロフィール','設定','表示名','名前を保存','🌗 ライト / ダークテーマ','テーマを変更','🔎 文字サイズ','🔊 チャットの返答を読み上げ','🌐 表示言語','🗑️ 学習データを削除'],
+  ko:['홈','AI 채팅','성적','커뮤니티','학습 계획','단어장','프로필','설정','표시 이름','이름 저장','🌗 라이트 / 다크 테마','테마 변경','🔎 글자 크기','🔊 채팅 답변 읽기','🌐 인터페이스 언어','🗑️ 학습 데이터 삭제'],
+  hi:['होम','AI चैट','अंक','समुदाय','अध्ययन योजना','शब्दावली','प्रोफ़ाइल','सेटिंग्स','प्रदर्शित नाम','नाम सहेजें','🌗 हल्की / गहरी थीम','थीम बदलें','🔎 फ़ॉन्ट आकार','🔊 चैट जवाब पढ़ें','🌐 इंटरफ़ेस भाषा','🗑️ अध्ययन डेटा हटाएँ'],
+  bn:['হোম','এআই চ্যাট','নম্বর','কমিউনিটি','পড়ার পরিকল্পনা','শব্দভান্ডার','প্রোফাইল','সেটিংস','প্রদর্শিত নাম','নাম সংরক্ষণ','🌗 হালকা / গাঢ় থিম','থিম বদলান','🔎 লেখার আকার','🔊 চ্যাটের উত্তর পড়ুন','🌐 ইন্টারফেসের ভাষা','🗑️ পড়ার তথ্য মুছুন'],
+  ur:['ہوم','اے آئی چیٹ','نمبر','کمیونٹی','مطالعے کا منصوبہ','الفاظ','پروفائل','ترتیبات','ظاہری نام','نام محفوظ کریں','🌗 ہلکی / گہری تھیم','تھیم تبدیل کریں','🔎 فونٹ کا سائز','🔊 چیٹ کا جواب پڑھیں','🌐 انٹرفیس کی زبان','🗑️ مطالعے کا ڈیٹا حذف کریں'],
+  ar:['الرئيسية','دردشة الذكاء الاصطناعي','الدرجات','المجتمع','خطة الدراسة','المفردات','الملف الشخصي','الإعدادات','الاسم المعروض','حفظ الاسم','🌗 المظهر الفاتح / الداكن','تغيير المظهر','🔎 حجم الخط','🔊 قراءة ردود الدردشة','🌐 لغة الواجهة','🗑️ حذف بيانات الدراسة'],
+  fa:['خانه','گفت‌وگوی هوش مصنوعی','نمرات','انجمن','برنامهٔ مطالعه','واژگان','نمایه','تنظیمات','نام نمایشی','ذخیرهٔ نام','🌗 پوستهٔ روشن / تیره','تغییر پوسته','🔎 اندازهٔ قلم','🔊 خواندن پاسخ‌های گفتگو','🌐 زبان رابط','🗑️ حذف داده‌های مطالعه'],
+  tr:['Ana sayfa','Yapay zekâ sohbeti','Notlar','Topluluk','Çalışma planı','Kelime listesi','Profil','Ayarlar','Görünen ad','Adı kaydet','🌗 Açık / koyu tema','Temayı değiştir','🔎 Yazı boyutu','🔊 Sohbet yanıtlarını seslendir','🌐 Arayüz dili','🗑️ Çalışma verilerini sil'],
+  th:['หน้าหลัก','แชต AI','คะแนน','ชุมชน','แผนการเรียน','คำศัพท์','โปรไฟล์','การตั้งค่า','ชื่อที่แสดง','บันทึกชื่อ','🌗 ธีมสว่าง / มืด','เปลี่ยนธีม','🔎 ขนาดตัวอักษร','🔊 อ่านคำตอบแชต','🌐 ภาษาของ интерфซ','🗑️ ลบข้อมูลการเรียน'],
+  id:['Beranda','Chat AI','Nilai','Komunitas','Rencana belajar','Kosakata','Profil','Pengaturan','Nama tampilan','Simpan nama','🌗 Tema terang / gelap','Ubah tema','🔎 Ukuran teks','🔊 Bacakan balasan chat','🌐 Bahasa antarmuka','🗑️ Hapus data belajar'],
+  ms:['Utama','Sembang AI','Markah','Komuniti','Rancangan belajar','Kosa kata','Profil','Tetapan','Nama paparan','Simpan nama','🌗 Tema cerah / gelap','Tukar tema','🔎 Saiz fon','🔊 Bacakan balasan sembang','🌐 Bahasa antara muka','🗑️ Padam data pembelajaran'],
+  fil:['Home','AI Chat','Mga marka','Komunidad','Plano sa pag-aaral','Talasalitaan','Profile','Mga Setting','Pangalan sa display','I-save ang pangalan','🌗 Maliwanag / madilim na tema','Palitan ang tema','🔎 Laki ng font','🔊 Basahin ang sagot sa chat','🌐 Wika ng interface','🗑️ Burahin ang datos sa pag-aaral'],
+  km:['ទំព័រដើម','ជជែក AI','ពិន្ទុ','សហគមន៍','ផែនការសិក្សា','វាក្យសព្ទ','ប្រវត្តិរូប','ការកំណត់','ឈ្មោះបង្ហាញ','រក្សាទុកឈ្មោះ','🌗 រូបរាងភ្លឺ / ងងឹត','ប្តូររូបរាង','🔎 ទំហំអក្សរ','🔊 អានចម្លើយជជែក','🌐 ភាសាចំណុចប្រទាក់','🗑️ លុបទិន្នន័យសិក្សា'],
+  lo:['ໜ້າຫຼັກ','ແຊັດ AI','ຄະແນນ','ຊຸມຊົນ','ແຜນການຮຽນ','ຄຳສັບ','ໂປຣໄຟລ໌','ການຕັ້ງຄ່າ','ຊື່ສະແດງ','ບັນທຶກຊື່','🌗 ຮູບແບບສວ່າງ / ມືດ','ປ່ຽນຮູບແບບ','🔎 ຂະໜາດຕົວອັກສອນ','🔊 ອ່ານຄຳຕອບແຊັດ','🌐 ພາສາໜ້າຈໍ','🗑️ ລຶບຂໍ້ມູນການຮຽນ'],
+  my:['ပင်မ','AI စကားပြော','အမှတ်များ','အသိုင်းအဝိုင်း','လေ့လာမှုအစီအစဉ်','ဝေါဟာရ','ကိုယ်ရေးအချက်အလက်','ဆက်တင်များ','ပြသမည့်အမည်','အမည်သိမ်းရန်','🌗 အလင်း / အမှောင်အပြင်အဆင်','အပြင်အဆင်ပြောင်းရန်','🔎 စာလုံးအရွယ်အစား','🔊 စကားပြောအဖြေဖတ်ရန်','🌐 မျက်နှာပြင်ဘာသာစကား','🗑️ လေ့လာမှုဒေတာဖျက်ရန်'],
+  ne:['गृहपृष्ठ','एआई च्याट','अङ्क','समुदाय','अध्ययन योजना','शब्दावली','प्रोफाइल','सेटिङहरू','देखिने नाम','नाम सुरक्षित गर्नुहोस्','🌗 हल्का / गाढा थिम','थिम बदल्नुहोस्','🔎 अक्षरको आकार','🔊 च्याटको जवाफ पढ्नुहोस्','🌐 इन्टरफेस भाषा','🗑️ अध्ययनको डाटा मेटाउनुहोस्']
+};
+
+// English translations for the complete interface, including content rendered after load.
+const EN_TRANSLATIONS = {
+  'Trợ lý học tập thông minh của bạn':'Your smart study assistant',
+  'Nhập tên để vào app':'Enter your name to continue',
+  'VD: Minh Anh':'e.g. Alex', '🚀 Vào app':'🚀 Enter app',
+  'Chào bạn!':'Hello!', 'Học viên':'Student',
+  'Nói chuyện':'Talk', 'Tắt/mở tiếng bot':'Toggle assistant voice', 'Sáng/Tối':'Light/Dark',
+  'Chào buổi sáng!':'Good morning!', 'Chào buổi chiều!':'Good afternoon!', 'Chào buổi tối!':'Good evening!',
+  'Sẵn sàng học chưa, ':'Ready to study, ',
+  'Hôm nay mình gợi ý môn học phù hợp với bạn!':'Here is a study suggestion for you today!',
+  '💬 Trò chuyện AI':'💬 Chat with AI', '⏱️ Ghi giờ học':'⏱️ Log study time',
+  '👥 Góc chia sẻ':'👥 Study corner', 'Mở cộng đồng':'Open community',
+  'Chia sẻ mục tiêu và mẹo học tập. Bài viết được lưu trên thiết bị này; ứng dụng hiện chưa kết nối người dùng trực tuyến.':'Share goals and study tips. Posts are saved on this device; the app is not connected to an online community.',
+  '📚 Gợi ý môn học lúc này':'📚 Study suggestion for now', 'Làm mới':'Refresh',
+  'Học hôm nay':'Studied today', 'Chuỗi ngày':'Day streak', 'Mục tiêu':'Goals',
+  'Tiến độ 7 ngày (phút)':'7-day progress (minutes)', 'Gợi ý hôm nay':'Today’s suggestion',
+  'Đang phân tích...':'Analyzing...', '⏳ Bộ đếm giờ học':'⏳ Study timer',
+  'Đặt thời gian tập trung. Khi hết giờ, app sẽ phát tiếng bíp báo hiệu.':'Set a focus duration. The app will beep when time is up.',
+  'Thời lượng (phút)':'Duration (minutes)', '▶ Bắt đầu':'▶ Start', '▶ Tiếp tục':'▶ Resume',
+  '⏸ Tạm dừng':'⏸ Pause', '↺ Đặt lại':'↺ Reset', 'Lịch học hôm nay':'Today’s study log', '+ Ghi giờ':'+ Log time',
+  'Xin chào! Mình là ':'Hello! I’m ', 'Mình có thể:':'I can help you with:',
+  'Phân tích':'Analyze', 'thói quen học tập':'study habits', 'Giải bài':'Solve problems',
+  'từng bước':'step by step', 'Lập kế hoạch':'Create a plan', 'cá nhân hóa':'personalized',
+  'Tính điểm':'Calculate grades', 'giữa kì - cuối kì - thi':'midterm, final, and exam scores',
+  'Gợi ý từ vựng':'Suggest vocabulary', 'theo ngữ cảnh':'by context', 'Bạn muốn bắt đầu với gì?':'What would you like to start with?',
+  '📚 Môn học':'📚 Subjects', '🧮 Tính điểm':'🧮 Grades', '💡 Giải bài':'💡 Solve', '❤️ Động viên':'❤️ Encourage me',
+  'Nhập câu hỏi...':'Type your question...', '🧮 Bảng điểm':'🧮 Gradebook', '＋ Thêm môn':'＋ Add subject',
+  'Nhập điểm hệ 10. Điểm trung bình được tính theo trọng số giữa kỳ, cuối kỳ và điểm thi.':'Enter scores from 0 to 10. The average uses the midterm, final, and exam weights.',
+  'GIỮA KỲ (%)':'MIDTERM (%)', 'CUỐI KỲ (%)':'FINAL (%)', 'ĐIỂM THI (%)':'EXAM (%)',
+  'ĐIỂM TB':'AVERAGE', 'SỐ MÔN':'SUBJECTS', 'XẾP LOẠI':'RATING',
+  'Bài viết chỉ được lưu trên thiết bị này; đây chưa phải cộng đồng trực tuyến.':'Posts are saved only on this device; this is not an online community.',
+  'Chia sẻ mục tiêu hoặc mẹo học tập...':'Share a goal or study tip...', 'Đăng':'Post',
+  '👤 Hồ sơ học tập':'👤 Study profile', 'Chọn avatar hồ sơ:':'Choose a profile avatar:',
+  '📅 Mục tiêu học tập':'📅 Study goals', 'Ví dụ: Ôn Toán 5 buổi':'e.g. Review math for 5 sessions',
+  '＋ Thêm mục tiêu':'＋ Add goal', '📚 Sổ từ vựng':'📚 Vocabulary notebook', '🎴 Ôn tập':'🎴 Review',
+  'Từ / cụm từ':'Word / phrase', 'Nghĩa':'Meaning', 'Câu ví dụ (không bắt buộc)':'Example sentence (optional)',
+  '＋ Lưu từ mới':'＋ Save word', '⚙️ Cài đặt':'⚙️ Settings', 'Tên của bạn':'Your name',
+  '🌐 Ngôn ngữ giao diện':'🌐 Interface language', '⏰ Đang nghe... Hãy nói rõ ràng':'⏰ Listening... Please speak clearly',
+  'Đang nghe... Hãy nói rõ ràng':'Listening... Please speak clearly', 'Dừng':'Stop', 'Đóng':'Close',
+  'Môn':'Subject', 'Số phút':'Minutes', 'Lưu':'Save', 'Xóa':'Delete', 'Xóa môn':'Delete subject',
+  'Chưa có buổi học nào hôm nay. Bấm ':'No study sessions today. Tap ', ' để bắt đầu! 🚀':' to get started! 🚀',
+  'Chưa có môn học. Bấm “Thêm môn” để bắt đầu nhập điểm.':'No subjects yet. Tap “Add subject” to enter grades.',
+  'Tổng trọng số: ':'Total weight: ', 'Tổng trọng số cần bằng ':'Total weight must equal ',
+  'Chưa có mục tiêu. Hãy thêm mục tiêu đầu tiên của bạn!':'No goals yet. Add your first goal!',
+  ' buổi':' sessions', ' / ':' / ', '＋ Hoàn thành 1 buổi':'＋ Complete 1 session',
+  'Sổ từ vựng đang trống.':'Your vocabulary notebook is empty.',
+  'Hãy thêm từ vựng để ôn tập':'Add vocabulary before reviewing',
+  'Nhập từ và nghĩa trước khi lưu':'Enter a word and its meaning before saving',
+  'Hồ sơ lưu trên thiết bị này':'Profile saved on this device', '📚 AI Study Agent':'📚 AI Study Agent',
+  'BUỔI HỌC':'STUDY SESSIONS', 'TỔNG PHÚT':'TOTAL MINUTES', 'CHUỖI NGÀY':'DAY STREAK',
+  'Bạn có thể đổi tên hiển thị trong mục Cài đặt. Tiến độ được lưu cục bộ trên trình duyệt.':'You can change your display name in Settings. Progress is saved locally in your browser.',
+  'Chưa có bài chia sẻ. Viết bài đầu tiên nhé!':'No posts yet. Share the first one!',
+  'Nhập mục tiêu và số buổi hợp lệ':'Enter a goal and a valid number of sessions',
+  'Tên không được để trống':'Name cannot be empty', 'Đã lưu tên hiển thị':'Display name saved',
+  'Nhập nội dung trước khi đăng':'Enter some text before posting', 'Đã đổi avatar hồ sơ':'Profile avatar updated',
+  'Đã bật đọc phản hồi':'Spoken replies enabled', 'Đã tắt đọc phản hồi':'Spoken replies disabled',
+  'Đã xóa dữ liệu học tập':'Study data deleted', 'Đã xóa buổi học':'Study session deleted',
+  'Xóa buổi học này khỏi lịch sử?':'Delete this study session from your history?',
+  'Xóa toàn bộ giờ học, điểm, kế hoạch, từ vựng và bài chia sẻ trên thiết bị này?':'Delete all study time, grades, plans, vocabulary, and posts on this device?',
+  'Thời lượng phải từ 1 đến 180 phút':'Duration must be between 1 and 180 minutes',
+  '⏰ Hết giờ học!':'⏰ Study time is up!', 'Hết giờ! Không phát được âm thanh trên thiết bị này.':'Time is up! Audio could not be played on this device.',
+  'Tên môn học:':'Subject name:', 'Điểm phải nằm trong khoảng 0–10':'Scores must be between 0 and 10',
+  'Mỗi trọng số phải từ 0 đến 100.':'Each weight must be from 0 to 100.',
+  'Bạn đã học liên tục ':'You have studied for ', ' ngày':' days', 'Hãy bắt đầu hôm nay!':'Start today!',
+  'Cố lên, 7 ngày đầu khó nhất!':'Keep going—the first 7 days are the hardest!',
+  'Tuyệt vời! Bạn đã vượt qua giai đoạn khó nhất 💪':'Amazing! You have made it through the hardest part 💪',
+  '🕐 Bây giờ: ':'🕐 Current time: ', ' (GMT+7)':' (GMT+7)',
+  '📊 Chào ':'📊 Hello ', '! Tuần này bạn học ':'! You studied ', ' phút, chuỗi ':' minutes this week, with a ', ' ngày.':'-day streak.',
+  '🎯 Tiếp tục học nhé!':'🎯 Keep studying!', 'Đã làm mới!':'Refreshed!',
+  '🧮 Toán học':'🧮 Mathematics', '📖 Ngữ Văn':'📖 Literature', '📚 Ôn từ vựng':'📚 Review vocabulary',
+  '✏️ Luyện bài tập':'✏️ Practice exercises', '☕ Nghỉ ngơi':'☕ Take a break',
+  '📝 Đọc lý thuyết':'📝 Read theory', '😴 Chuẩn bị ngủ':'😴 Get ready for bed',
+  'Não minh mẫn nhất sáng sớm':'Your mind is sharpest early in the morning',
+  'Đọc hiểu phù hợp buổi sáng':'Reading comprehension suits the morning',
+  'Sau ăn não cần nghỉ':'Your brain needs a rest after eating', 'Buổi chiều tỉnh táo':'A good time to focus in the afternoon',
+  'Giờ nghỉ':'Time to rest', 'Buổi tối yên tĩnh':'A quiet evening study period',
+  'Não cần ngủ để ghi nhớ':'Sleep helps your brain remember',
+  '💡 Uống nước ấm để não tỉnh táo.':'💡 Drink water to stay alert.',
+  '💡 Ghi chú tóm tắt sau mỗi đoạn.':'💡 Write a brief note after each section.',
+  '💡 Nghỉ 15 phút rồi học nhẹ.':'💡 Rest for 15 minutes, then do some light study.',
+  '💡 Pomodoro 45/10.':'💡 Try a 45/10 Pomodoro.', '💡 Vận động nhẹ 5 phút.':'💡 Do some light exercise for 5 minutes.',
+  '💡 Đọc lại ghi chú trước ngủ 10 phút.':'💡 Review your notes for 10 minutes before bed.',
+  '💡 Tắt điện thoại 30 phút trước ngủ.':'💡 Put your phone away 30 minutes before bed.',
+  '⏰ LÚC ':'⏰ AT ', 'Gợi ý: ':'Suggestion: ', 'Đã ghi ':'Logged ', ' phút môn ':' minutes for ',
+  'Không có bài học nào hôm nay':'No study sessions today', '🌐 Online':'🌐 Online', '📴 Offline':'📴 Offline',
+  'Đang sáng':'Light mode', 'Đang tối':'Dark mode',   'Cỡ chữ:':'Font size: ',
+  'Lưu tên':'Save name', '🌗 Giao diện sáng / tối':'🌗 Light / dark theme', 'Đổi giao diện':'Change theme',
+  '🔎 Cỡ chữ':'🔎 Font size', '🔊 Đọc phản hồi chat':'🔊 Read chat replies',
+  '🗑️ Xóa dữ liệu học tập':'🗑️ Delete study data', 'Sẵn sàng học chưa':'Ready to study',
+  'Chưa có buổi học nào hôm nay. Bấm':'No study sessions today. Tap',
+  'Tên hiển thị':'Display name', 'Điểm trung bình':'Average score', 'Xóa':'Delete',
+  'MÔN':'SUBJECT', 'GIỮA KỲ':'MIDTERM', 'CUỐI KỲ':'FINAL', 'ĐIỂM THI':'EXAM', 'TB':'AVG',
+  'Chưa có môn học.':'No subjects yet.', 'Bấm “Thêm môn” để bắt đầu nhập điểm.':'Tap “Add subject” to enter grades.',
+  'Tổng trọng số cần bằng':'Total weight must equal', 'Mỗi trọng số phải từ':'Each weight must be between',
+  'Nhập điểm hệ 10.':'Enter scores from 0 to 10.',
+  'Chưa có mục tiêu.':'No goals yet.', 'Hãy thêm mục tiêu đầu tiên của bạn!':'Add your first goal!',
+  'Ví dụ: Ôn Toán 5 buổi':'e.g. Review math for 5 sessions', 'Hoàn thành 1 buổi':'Complete 1 session',
+  'Sổ từ vựng đang trống.':'Your vocabulary notebook is empty.', 'Chưa có bài chia sẻ.':'No posts yet.',
+  'Viết bài đầu tiên nhé!':'Share the first one!', 'Dữ liệu được lưu trong trình duyệt trên thiết bị này. Xóa dữ liệu sẽ không thể khôi phục.':'Data is saved in this browser on this device. Deleted data cannot be recovered.',
+  'Hãy thêm từ vựng để ôn tập':'Add vocabulary before reviewing.',
+  'Phân tích thói quen học tập:':'Study habits analysis:', 'Chuỗi ngày:':'Day streak:', 'Hôm nay:':'Today:',
+  'Tổng:':'Total:', 'buổi học':'study sessions', 'Cố đạt ít nhất 1-2 giờ/ngày nhé!':'Try to study for at least 1–2 hours a day!',
+  'Duy trì đều đặn là chìa khóa!':'Consistency is key!', 'Bây giờ là':'The current time is',
+  'Bạn muốn:':'What would you like to do?', 'Gợi ý môn học theo giờ GMT+7':'Suggest a subject based on GMT+7 time',
+  'Giải bài, động viên tinh thần':'Solve problems or get encouragement', 'Hỏi mình bất cứ điều gì bạn nhé!':'Ask me anything!',
+  'Mình có thể giúp:':'I can help with:', 'Bạn đã học liên tục':'You have studied consecutively',
+  'ngày.':'days.', 'Cố lên nhé':'Keep going!', 'Nhập số phút > 0':'Enter a number of minutes greater than 0',
+  'Đã ghi':'Logged', 'môn':'subject', 'Hãy bắt đầu hôm nay!':'Start today!',
+  'Tuyệt vời!':'Amazing!', 'Không khởi động được micro':'Could not start the microphone',
+  'Trình duyệt không hỗ trợ nhận diện giọng nói.':'Speech recognition is not supported by this browser.',
+  'Lỗi':'Error', 'Đã đổi ngôn ngữ':'Language changed', 'Không có kết nối':'No connection',
+  'Chọn avatar hồ sơ':'Choose a profile avatar', 'Tên không được để trống':'Name cannot be empty',
+  'Bạn đã học liên tục ':'You have studied consecutively ',
+  '📊 Phân tích thói quen học tập':'📊 Study habits analysis',
+  '⚠️ Cố đạt ít nhất 1-2 giờ/ngày nhé!':'⚠️ Try to study for at least 1–2 hours a day!',
+  '👍 Duy trì đều đặn là chìa khóa!':'👍 Consistency is key!',
+  'Chào buổi sáng':'Good morning', 'Chào buổi chiều':'Good afternoon', 'Chào buổi tối':'Good evening',
+  'Giờ':'Time', 'phút':'minutes', ' phút':' minutes', ' phút!':' minutes!',
+  'Gợi ý môn học phù hợp lúc này':'Suggest a suitable subject for now',
+  'Hướng dẫn tính điểm giữa kì cuối kì điểm thi':'How to calculate midterm, final, and exam grades',
+  'Giải thích định lý Pythagore kèm ví dụ':'Explain the Pythagorean theorem with an example',
+  'Động viên tôi một câu':'Give me some encouragement',
+  'Câu ví dụ (không bắt buộc)':'Example sentence (optional)', 'Số buổi':'Number of sessions',
+  'Nhập từ và nghĩa trước khi lưu':'Enter a word and its meaning before saving',
+  'Điểm phải nằm trong khoảng 0–10':'Scores must be between 0 and 10',
+  'Tổng trọng số cần bằng ':'Total weight must equal ', 'Tổng trọng số: ':'Total weight: ',
+  'Tổng phút':'Total minutes', 'BUỔI HỌC':'STUDY SESSIONS', 'TỔNG PHÚT':'TOTAL MINUTES',
+  'Xóa toàn bộ ':'Delete all ', 'bài chia sẻ trên thiết bị này?':'posts on this device?',
+  'Không có buổi học nào hôm nay.':'No study sessions today.',
+  'Đã đổi ngôn ngữ':'Language changed', 'Học tập':'Study', 'Mục tiêu học tập':'Study goals',
+  'Ghi giờ':'Log time', 'Học hôm nay':'Studied today',
+  'Giỏi':'Excellent', 'Khá':'Good', 'Yếu':'Needs improvement', 'Xóa buổi học':'Delete study session',
+  'Chọn avatar hồ sơ:':'Choose a profile avatar:', 'Bây giờ là ':'The current time is ',
+  'Trình duyệt không hỗ trợ nhận diện giọng nói.':'Speech recognition is not supported by this browser.',
+  'Nhập số phút > 0':'Enter a number of minutes greater than 0', 'Đang nghe...':'Listening...',
+  'Lỗi':'Error', 'Không khởi động được micro':'Could not start the microphone',
+  'Tổng trọng số cần bằng ':'Total weight must equal ', 'Mỗi trọng số phải từ 0 đến 100.':'Each weight must be between 0 and 100.',
+  '📊 Phân tích thói quen học tập:':'📊 Study habits analysis:', '• 🔥 Chuỗi ngày:':'• 🔥 Day streak:',
+  '• ⏱️ Hôm nay:':'• ⏱️ Today:', '• 📈 Tổng:':'• 📈 Total:',
+  '📅':'📅', 'Tên môn học:':'Subject name:', 'Tên hiển thị':'Display name',
+  'Tắt/mở tiếng bot':'Toggle assistant voice', 'Sáng/Tối':'Light/Dark'
+};
+
+function translateEnglish(text){
+  return Object.keys(EN_TRANSLATIONS).sort((a,b)=>b.length-a.length).reduce((value,source)=>value.split(source).join(EN_TRANSLATIONS[source]),text);
+}
+
+// ==================== APP ====================
+const App = {
+  userName: 'Bạn',
+  userAvatar: '🦁',
+  clockTimer: null,
+  cards: [], cardIdx: 0,
+  rec: null,
+  timerRemainingSeconds: null,
+  timerInterval: null,
+  audioContext: null,
+
+  init(){
+    // Check nếu đã từng vào app (lưu tên)
+    const saved = localStorage.getItem('agent6_name');
+    if(saved){
+      this.userName = saved;
+      this.userAvatar = localStorage.getItem('agent6_avatar') || '🦁';
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('app').classList.remove('hidden');
+      setTimeout(()=>this.afterLogin(), 100);
+    }
+    this.bind();
+    this.installLocalization();
+    this.startClock();
+    const theme = localStorage.getItem('theme');
+    if(theme === 'light') document.documentElement.setAttribute('data-theme','light');
+    const themeButton = document.getElementById('btnTheme');
+    if(themeButton) themeButton.textContent = theme === 'light' ? '☀️' : '🌙';
+    const savedSize = parseInt(localStorage.getItem('fs') || '16',10);
+    if(Number.isFinite(savedSize)) document.documentElement.style.setProperty('--fs-base',Math.max(13,Math.min(24,savedSize))+'px');
+  },
+
+  authEnter(){
+    const inp = document.getElementById('loginName');
+    let name = inp.value.trim();
+    if(!name) name = 'Bạn';
+    this.userName = name;
+    this.userAvatar = '🦁';
+    localStorage.setItem('agent6_name', name);
+    localStorage.setItem('agent6_avatar', '🦁');
+    document.getElementById('authScreen').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+    setTimeout(()=>this.afterLogin(), 100);
+  },
+
+  afterLogin(){
+    this.loadAll();
+    this.greet();
+    this.checkNet();
+    setInterval(()=>this.checkNet(), 5000);
+  },
+
+  startClock(){
+    const tick = () => {
+      const t = TimeVN.clockString();
+      const d = TimeVN.dateString();
+      const c1 = document.getElementById('clock');
+      if(c1) c1.textContent = t;
+      const dl = document.getElementById('dateLabel');
+      if(dl) dl.textContent = d;
+    };
+    tick();
+    this.clockTimer = setInterval(tick, 1000);
+  },
+
+  checkNet(){
+    const badge = document.getElementById('onlineBadge');
+    const txt = document.getElementById('netText');
+    if(!badge) return;
+    if(navigator.onLine){
+      badge.className = 'badge on';
+      txt.textContent = '🌐 Online';
+    } else {
+      badge.className = 'badge';
+      txt.textContent = '📴 Offline';
+    }
+  },
+
+  greet(){
+    const h = TimeVN.hourNow();
+    let g = 'Chào buổi tối! 🌙';
+    if(h<12) g='Chào buổi sáng! 🌅';
+    else if(h<18) g='Chào buổi chiều! ☀️';
+    document.getElementById('greeting').textContent = g;
+    document.getElementById('userName').textContent = this.userName + ' • ' + TimeVN.clockString();
+    document.getElementById('heroName').textContent = this.userName;
+  },
+
+  go(tab){
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));
+    const t = document.querySelector(`.tab[data-tab="${tab}"]`);
+    if(t) t.classList.add('active');
+    const n = document.querySelector(`#nav button[data-tab="${tab}"]`);
+    if(n) n.classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(tab==='home'){ this.loadChart(); this.updateTodaySuggest(); }
+  },
+
+  esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); },
+  md(s){
+    s = this.esc(s);
+    s = s.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    return s;
+  },
+  toast(text){
+    let t = document.getElementById('toast');
+    if(!t){
+      t = document.createElement('div');
+      t.id='toast';
+      t.style.cssText = 'position:fixed;left:50%;bottom:120px;transform:translateX(-50%);background:linear-gradient(135deg,var(--yellow),var(--yellow-2));color:#1A2440;padding:12px 20px;border-radius:14px;font-weight:800;font-size:14.5px;z-index:2000;box-shadow:0 8px 30px rgba(255,212,59,.4);opacity:0;transition:opacity .3s,bottom .3s;pointer-events:none;max-width:88%;text-align:center';
+      document.body.appendChild(t);
+    }
+    t.textContent = text;
+    requestAnimationFrame(()=>{ t.style.opacity='1'; t.style.bottom='140px'; });
+    clearTimeout(this._tt);
+    this._tt = setTimeout(()=>{ t.style.opacity='0'; t.style.bottom='120px'; }, 2200);
+  },
+
+  bind(){
+    document.querySelectorAll('#nav button').forEach(b=>{
+      b.onclick = () => this.go(b.dataset.tab);
+    });
+    document.getElementById('btnSend').onclick = () => this.send();
+    document.getElementById('chatInput').addEventListener('keypress', e=>{
+      if(e.key==='Enter') this.send();
+    });
+    document.querySelectorAll('.quick-row button').forEach(b=>{
+      b.onclick = () => { document.getElementById('chatInput').value = b.dataset.q; this.send(); };
+    });
+    document.getElementById('micChat').onclick = () => this.voice();
+    document.getElementById('btnVoiceTop').onclick = () => this.voice();
+    document.getElementById('zoomIn').onclick = () => this.zoom(1);
+    document.getElementById('zoomOut').onclick = () => this.zoom(-1);
+    document.getElementById('btnTheme').onclick = () => this.toggleTheme();
+    document.getElementById('btnSpeak').onclick = () => this.toggleSpeech();
+    document.getElementById('timerMinutes').addEventListener('change', () => {
+      if(this.timerInterval === null) this.resetTimer();
+    });
+    document.getElementById('loginName').addEventListener('keypress', e=>{
+      if(e.key==='Enter') this.authEnter();
+    });
+  },
+
+  toggleTheme(){
+    const isLight = document.documentElement.getAttribute('data-theme')==='light';
+    document.documentElement.setAttribute('data-theme', isLight ? '' : 'light');
+    document.getElementById('btnTheme').textContent = isLight ? '🌙' : '☀️';
+    localStorage.setItem('theme', isLight ? 'dark' : 'light');
+    const label = document.getElementById('themeSettingLabel');
+    if(label) label.textContent = isLight ? 'Đang sáng' : 'Đang tối';
+    this.applyLanguage();
+  },
+
+  zoom(dir){
+    let base = parseInt(localStorage.getItem('fs')||'16');
+    base = Math.max(13, Math.min(24, base + dir));
+    document.documentElement.style.setProperty('--fs-base', base+'px');
+    localStorage.setItem('fs', base);
+    this.toast('Cỡ chữ: '+base+'px');
+  },
+
+  loadAll(){
+    this.loadStats();
+    this.loadChart();
+    this.loadToday();
+    this.suggest();
+    this.updateTodaySuggest();
+    this.loadSectionData();
+  },
+
+  loadStats(){
+    const d = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const today = TimeVN.shortDate(TimeVN.now());
+    const todayMin = d.sessions.filter(s=>s.date===today).reduce((a,b)=>a+b.minutes,0);
+    document.getElementById('sTime').textContent = todayMin+'p';
+    document.getElementById('sStreak').textContent = d.streaks||0;
+  },
+
+  loadChart(){
+    const cv = document.getElementById('chart');
+    if(!cv) return;
+    const dpr = window.devicePixelRatio||1;
+    const W = cv.clientWidth || 300;
+    const H = 170;
+    cv.width = W*dpr; cv.height = H*dpr;
+    cv.style.height = H+'px';
+    const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,W,H);
+
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const week = [];
+    for(let i=6;i>=0;i--){
+      const d = new Date(Date.now()-i*86400000);
+      const target = TimeVN.shortDate(new Date(d.getTime()));
+      week.push({
+        label:['CN','T2','T3','T4','T5','T6','T7'][d.getDay()],
+        minutes: data.sessions.filter(s=>s.date===target).reduce((a,b)=>a+b.minutes,0)
+      });
+    }
+
+    const max = Math.max(60, ...week.map(d=>d.minutes));
+    const padX = 32, padB = 30;
+    const bw = (W - padX*2) / week.length;
+
+    ctx.strokeStyle = '#25335B';
+    ctx.lineWidth = 1;
+    for(let i=0;i<=4;i++){
+      const y = H - padB - (H - 50) * i/4;
+      ctx.beginPath(); ctx.moveTo(padX, y); ctx.lineTo(W-10, y); ctx.stroke();
+    }
+
+    week.forEach((d,i)=>{
+      const x = padX + i*bw + bw*0.15;
+      const h = Math.max((H - 50) * (d.minutes / max), 4);
+      const y = H - padB - h;
+      const grad = ctx.createLinearGradient(0, y, 0, H-padB);
+      grad.addColorStop(0, '#FFD43B'); grad.addColorStop(1, '#2F7DF6');
+      ctx.fillStyle = grad;
+      const w = bw*0.7;
+      ctx.beginPath();
+      ctx.roundRect(x, y, w, h, [4]);
+      ctx.fill();
+      ctx.fillStyle = '#8A98B5';
+      ctx.font = '600 12px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText(d.label, x+w/2, H-10);
+      if(d.minutes>0){
+        ctx.fillStyle = '#FFD43B';
+        ctx.font = '800 11px sans-serif';
+        ctx.fillText(d.minutes, x+w/2, y-6);
+      }
+    });
+  },
+
+  loadToday(){
+    const today = TimeVN.shortDate(TimeVN.now());
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const list = data.sessions.filter(s=>s.date===today);
+    const el = document.getElementById('todayList');
+    if(!list.length){
+      el.innerHTML = '<div class="empty">Chưa có buổi học nào hôm nay. Bấm <b>+ Ghi giờ</b>! 🚀</div>';
+      return;
+    }
+    el.innerHTML = data.sessions.map((s,index)=>({s,index})).filter(item=>item.s.date===today).map(({s,index})=>{
+      const d = new Date(s.timestamp);
+      const t = TimeVN.format(d, {hour:'2-digit', minute:'2-digit'});
+      return `<div style="display:flex;gap:10px;align-items:center;padding:12px;background:#111A2E;border-radius:12px;margin-bottom:8px;border-left:5px solid #2F7DF6">
+        <b style="color:#5B9BFF;min-width:56px">${t}</b>
+        <span style="flex:1">📖 ${this.esc(s.subject)} — <b>${s.minutes}</b> phút</span>
+        <button class="session-delete" onclick="App.deleteStudySession(${index})" aria-label="Xóa buổi học">Xóa</button>
+      </div>`;
+    }).join('');
+  },
+
+  loadSectionData(){
+    this.renderScores();
+    this.renderGoals();
+    this.renderVocab();
+    this.renderProfile();
+    this.renderAvatarPicker();
+    this.renderCommunity();
+    const nameField = document.getElementById('settingsName');
+    if(nameField) nameField.value = this.userName;
+    const speech = document.getElementById('speechSetting');
+    const speechEnabled = localStorage.getItem('agent6_speech') !== 'false';
+    if(speech) speech.checked = speechEnabled;
+    const speakButton = document.getElementById('btnSpeak');
+    if(speakButton) speakButton.classList.toggle('on',speechEnabled);
+    const themeLabel = document.getElementById('themeSettingLabel');
+    if(themeLabel) themeLabel.textContent = document.documentElement.getAttribute('data-theme')==='light' ? 'Đang sáng' : 'Đang tối';
+    this.applyLanguage();
+  },
+
+  setLanguage(language){
+    if(!UI_TEXT[language]) return;
+    localStorage.setItem('agent6_language',language);
+    this.applyLanguage();
+    this.toast(language==='vi' ? 'Đã đổi ngôn ngữ' : 'Language changed');
+  },
+  applyLanguage(){
+    const language = localStorage.getItem('agent6_language') || 'vi';
+    const words = UI_TEXT[language] || UI_TEXT.vi;
+    document.documentElement.lang = ({en:'en',zh:'zh-CN',ja:'ja',ko:'ko',hi:'hi',bn:'bn',ur:'ur',ar:'ar',fa:'fa',tr:'tr',th:'th',id:'id',ms:'ms',fil:'fil',km:'km',lo:'lo',my:'my',ne:'ne'}[language] || 'vi');
+    document.documentElement.dir = ['ur','ar','fa'].includes(language) ? 'rtl' : 'ltr';
+    const navKeys = ['home','chat','score','community','plan','vocab','profile','settings'];
+    document.querySelectorAll('[data-nav-label]').forEach(el=>{
+      const index = navKeys.indexOf(el.dataset.navLabel);
+      if(index >= 0) el.textContent = words[index];
+    });
+    const targets = ['settingsNameLabel','saveNameButton','themeSettingText','themeSettingLabel','fontSizeText','speechSettingText','languageLabel','clearDataButton'];
+    targets.forEach((id,index)=>{
+      const el = document.getElementById(id);
+      if(el) el.textContent = words[index+8];
+    });
+    const select = document.getElementById('languageSelect');
+    if(select) select.value = language;
+    this.localizeDOM();
+  },
+  installLocalization(){
+    this.localizeDOM();
+    if(this._localizationObserver) return;
+    this._localizationObserver = new MutationObserver(records=>{
+      records.forEach(record=>{
+        if(record.type==='characterData') this.localizeNode(record.target);
+        record.addedNodes?.forEach(node=>this.localizeDOM(node));
+      });
+    });
+    this._localizationObserver.observe(document.body,{childList:true,subtree:true,characterData:true});
+  },
+  localizeNode(node){
+    if(node.nodeType!==Node.TEXT_NODE) return;
+    if(node.parentElement?.closest('script,style')) return;
+    const current = node.nodeValue;
+    if(node.__agent6LocalizedValue && current!==node.__agent6LocalizedValue) node.__agent6SourceText=current;
+    if(node.__agent6SourceText===undefined) node.__agent6SourceText=current;
+    const language = localStorage.getItem('agent6_language') || 'vi';
+    const next = language==='en' ? translateEnglish(node.__agent6SourceText) : node.__agent6SourceText;
+    node.__agent6LocalizedValue=next;
+    if(current!==next) node.nodeValue=next;
+  },
+  localizeDOM(root=document.body){
+    const language = localStorage.getItem('agent6_language') || 'vi';
+    const visit = node=>{
+      if(node.nodeType===Node.TEXT_NODE){ this.localizeNode(node); return; }
+      if(node.nodeType!==Node.ELEMENT_NODE && node!==document) return;
+      if(node.matches?.('script,style')) return;
+      node.childNodes?.forEach(visit);
+      if(node.nodeType===Node.ELEMENT_NODE){
+        ['placeholder','title','aria-label'].forEach(attribute=>{
+          if(!node.hasAttribute(attribute)) return;
+          const key='__agent6_'+attribute;
+          const current=node.getAttribute(attribute);
+          if(node[key+'_translated'] && current!==node[key+'_translated']) node[key]=current;
+          if(node[key]===undefined) node[key]=current;
+          const next=language==='en' ? translateEnglish(node[key]) : node[key];
+          node[key+'_translated']=next;
+          if(current!==next) node.setAttribute(attribute,next);
+        });
+      }
+    };
+    visit(root);
+  },
+
+  renderScores(){
+    const wrap = document.getElementById('scoreTableWrap');
+    if(!wrap) return;
+    const subjects = JSON.parse(localStorage.getItem('agent6_scores') || '[]');
+    const weights = JSON.parse(localStorage.getItem('agent6_weights') || '{"mid":30,"final":30,"exam":40}');
+    ['Mid','Final','Exam'].forEach(key=>{
+      const input = document.getElementById('weight'+key);
+      if(input) input.value = weights[key.toLowerCase()] ?? (key==='Mid'?30:key==='Final'?30:40);
+    });
+    const totalWeight = Number(weights.mid)+Number(weights.final)+Number(weights.exam);
+    const note = document.getElementById('weightNote');
+    if(note) note.innerHTML = totalWeight===100 ? 'Tổng trọng số: <b>100%</b>' : 'Tổng trọng số cần bằng <b>100%</b>.';
+    if(!subjects.length){
+      wrap.innerHTML = '<div class="empty">Chưa có môn học. Bấm “Thêm môn” để bắt đầu nhập điểm.</div>';
+      this.updateGPA([]);
+      return;
+    }
+    const rows = subjects.map((subject,index)=>{
+      const scores = [subject.mid,subject.final,subject.exam];
+      const valid = scores.every(v=>v!=='' && v!==null && Number.isFinite(Number(v)) && Number(v)>=0 && Number(v)<=10) && totalWeight===100;
+      const average = valid ? ((Number(subject.mid)*weights.mid+Number(subject.final)*weights.final+Number(subject.exam)*weights.exam)/100).toFixed(2) : '—';
+      return `<tr><td class="sub-name">${this.esc(subject.name)}</td>${['mid','final','exam'].map(type=>`<td><input aria-label="${this.esc(subject.name)} ${type}" type="number" min="0" max="10" step="0.1" value="${subject[type] ?? ''}" onchange="App.setScore(${index},'${type}',this.value)"></td>`).join('')}<td class="avg-cell">${average}</td><td><button class="btn btn-sm btn-danger" onclick="App.deleteSubject(${index})" aria-label="Xóa môn">×</button></td></tr>`;
+    }).join('');
+    wrap.innerHTML = `<div style="overflow-x:auto"><table class="score-table"><thead><tr><th>MÔN</th><th>GIỮA KỲ</th><th>CUỐI KỲ</th><th>ĐIỂM THI</th><th>TB</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    const completed = subjects.filter(s=>[s.mid,s.final,s.exam].every(v=>v!=='' && v!==null && Number.isFinite(Number(v)) && Number(v)>=0 && Number(v)<=10));
+    this.updateGPA(totalWeight===100 ? completed.map(s=>(Number(s.mid)*weights.mid+Number(s.final)*weights.final+Number(s.exam)*weights.exam)/100) : []);
+  },
+
+  updateGPA(averages){
+    const avg = averages.length ? averages.reduce((a,b)=>a+b,0)/averages.length : null;
+    const averageEl = document.getElementById('gpaAverage');
+    const countEl = document.getElementById('gpaSubjects');
+    const rankEl = document.getElementById('gpaRank');
+    if(averageEl) averageEl.textContent = avg===null ? '—' : avg.toFixed(2);
+    if(countEl) countEl.textContent = averages.length;
+    if(rankEl) rankEl.textContent = avg===null ? '—' : avg>=8?'Giỏi':avg>=6.5?'Khá':avg>=5?'TB':'Yếu';
+    const stat = document.getElementById('sGPA');
+    if(stat) stat.textContent = avg===null ? '--' : avg.toFixed(1);
+  },
+
+  addSubject(){
+    const name = prompt('Tên môn học:');
+    if(!name || !name.trim()) return;
+    const subjects = JSON.parse(localStorage.getItem('agent6_scores') || '[]');
+    subjects.push({name:name.trim().slice(0,40),mid:'',final:'',exam:''});
+    localStorage.setItem('agent6_scores',JSON.stringify(subjects));
+    this.renderScores();
+  },
+  setScore(index,type,value){
+    const subjects = JSON.parse(localStorage.getItem('agent6_scores') || '[]');
+    const score = value==='' ? '' : Number(value);
+    if(!subjects[index] || (score!=='' && (!Number.isFinite(score)||score<0||score>10))){ this.toast('Điểm phải nằm trong khoảng 0–10'); this.renderScores(); return; }
+    subjects[index][type] = score;
+    localStorage.setItem('agent6_scores',JSON.stringify(subjects));
+    this.renderScores();
+  },
+  deleteSubject(index){
+    const subjects = JSON.parse(localStorage.getItem('agent6_scores') || '[]');
+    subjects.splice(index,1);
+    localStorage.setItem('agent6_scores',JSON.stringify(subjects));
+    this.renderScores();
+  },
+  saveWeights(){
+    const mid = Number(document.getElementById('weightMid').value);
+    const final = Number(document.getElementById('weightFinal').value);
+    const exam = Number(document.getElementById('weightExam').value);
+    const note = document.getElementById('weightNote');
+    if([mid,final,exam].some(n=>!Number.isFinite(n)||n<0||n>100)){
+      if(note) note.textContent = 'Mỗi trọng số phải từ 0 đến 100.';
+      return;
+    }
+    localStorage.setItem('agent6_weights',JSON.stringify({mid,final,exam}));
+    this.renderScores();
+  },
+
+  renderGoals(){
+    const list = document.getElementById('planList');
+    if(!list) return;
+    const goals = JSON.parse(localStorage.getItem('agent6_goals') || '[]');
+    list.innerHTML = goals.length ? goals.map((g,i)=>`<div class="goal"><div class="title">${this.esc(g.title)}</div><div class="bar"><div class="fill" style="width:${Math.min(100,Math.round(g.progress/g.target*100))}%"></div></div><div class="meta"><span>${g.progress} / ${g.target} buổi</span><span>${Math.min(100,Math.round(g.progress/g.target*100))}%</span></div><div class="acts"><button class="btn btn-sm btn-blue" onclick="App.progressGoal(${i})">＋ Hoàn thành 1 buổi</button><button class="btn btn-sm btn-danger" onclick="App.deleteGoal(${i})">Xóa</button></div></div>`).join('') : '<div class="empty">Chưa có mục tiêu. Hãy thêm mục tiêu đầu tiên của bạn!</div>';
+    const total = goals.length ? Math.round(goals.reduce((sum,g)=>sum+Math.min(1,g.progress/g.target),0)/goals.length*100) : 0;
+    const stat = document.getElementById('sGoals');
+    if(stat) stat.textContent = total+'%';
+  },
+  addGoal(){
+    const title = document.getElementById('planTitle').value.trim();
+    const target = Number(document.getElementById('planTarget').value);
+    if(!title || !Number.isInteger(target) || target<1){ this.toast('Nhập mục tiêu và số buổi hợp lệ'); return; }
+    const goals = JSON.parse(localStorage.getItem('agent6_goals') || '[]');
+    goals.push({title:title.slice(0,60),target,progress:0});
+    localStorage.setItem('agent6_goals',JSON.stringify(goals));
+    document.getElementById('planTitle').value = '';
+    this.renderGoals();
+  },
+  progressGoal(index){
+    const goals = JSON.parse(localStorage.getItem('agent6_goals') || '[]');
+    if(goals[index]) goals[index].progress = Math.min(goals[index].target,goals[index].progress+1);
+    localStorage.setItem('agent6_goals',JSON.stringify(goals));
+    this.renderGoals();
+  },
+  deleteGoal(index){
+    const goals = JSON.parse(localStorage.getItem('agent6_goals') || '[]');
+    goals.splice(index,1); localStorage.setItem('agent6_goals',JSON.stringify(goals)); this.renderGoals();
+  },
+
+  renderVocab(){
+    const list = document.getElementById('vocabList');
+    if(!list) return;
+    const words = JSON.parse(localStorage.getItem('agent6_vocab') || '[]');
+    list.innerHTML = words.length ? words.map((w,i)=>`<div class="vocab-item"><div class="w">${this.esc(w.word)}</div><div class="mn">${this.esc(w.meaning)}</div>${w.example?`<div class="ex">${this.esc(w.example)}</div>`:''}<button class="btn btn-sm btn-danger" style="margin-top:8px" onclick="App.deleteVocab(${i})">Xóa</button></div>`).join('') : '<div class="empty">Sổ từ vựng đang trống.</div>';
+  },
+  addVocab(){
+    const word = document.getElementById('vocabWord').value.trim();
+    const meaning = document.getElementById('vocabMeaning').value.trim();
+    const example = document.getElementById('vocabExample').value.trim();
+    if(!word || !meaning){ this.toast('Nhập từ và nghĩa trước khi lưu'); return; }
+    const words = JSON.parse(localStorage.getItem('agent6_vocab') || '[]');
+    words.unshift({word,meaning,example});
+    localStorage.setItem('agent6_vocab',JSON.stringify(words));
+    ['vocabWord','vocabMeaning','vocabExample'].forEach(id=>document.getElementById(id).value='');
+    this.renderVocab();
+  },
+  deleteVocab(index){
+    const words = JSON.parse(localStorage.getItem('agent6_vocab') || '[]');
+    words.splice(index,1); localStorage.setItem('agent6_vocab',JSON.stringify(words)); this.renderVocab();
+  },
+  quizVocab(){
+    const words = JSON.parse(localStorage.getItem('agent6_vocab') || '[]');
+    if(!words.length){ this.toast('Hãy thêm từ vựng để ôn tập'); return; }
+    const item = words[Math.floor(Math.random()*words.length)];
+    alert(`Nghĩa của “${item.word}” là gì?\n\nĐáp án: ${item.meaning}${item.example?'\n\nVí dụ: '+item.example:''}`);
+  },
+
+  renderProfile(){
+    const el = document.getElementById('profileContent');
+    if(!el) return;
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const minutes = data.sessions.reduce((sum,session)=>sum+(Number(session.minutes)||0),0);
+    el.innerHTML = `<div class="user-card"><div class="av">${this.userAvatar||'👤'}</div><div class="info"><div class="name">${this.esc(this.userName)}</div><div class="email">Hồ sơ lưu trên thiết bị này</div><div class="joined">📚 AI Study Agent</div></div></div><div class="gpa-grid"><div class="gpa-cell"><div class="n">${data.sessions.length}</div><div class="t">BUỔI HỌC</div></div><div class="gpa-cell"><div class="n">${minutes}</div><div class="t">TỔNG PHÚT</div></div><div class="gpa-cell"><div class="n">${data.streaks||0}</div><div class="t">CHUỖI NGÀY</div></div></div><p class="hint">Bạn có thể đổi tên hiển thị trong mục Cài đặt. Tiến độ được lưu cục bộ trên trình duyệt.</p>`;
+  },
+  renderAvatarPicker(){
+    const picker = document.getElementById('profileAvatarPicker');
+    const headerAvatar = document.getElementById('avatarEmoji');
+    const avatars = ['🦁','🐱','🐼','🐸','🦊','🐰','🐯','🐨','🐻','🐵','🐧','🐲'];
+    if(picker){
+      picker.innerHTML = `<p class="hint" style="width:100%;text-align:center;margin-bottom:0">Chọn avatar hồ sơ:</p>${avatars.map(avatar=>`<button type="button" class="${this.userAvatar===avatar?'selected':''}" aria-label="Chọn avatar ${avatar}" aria-pressed="${this.userAvatar===avatar}" onclick="App.selectAvatar('${avatar}')">${avatar}</button>`).join('')}`;
+    }
+    if(headerAvatar) headerAvatar.innerHTML = `${this.esc(this.userAvatar)}<span class="pulse-dot"></span>`;
+  },
+  selectAvatar(avatar){
+    const allowed = ['🦁','🐱','🐼','🐸','🦊','🐰','🐯','🐨','🐻','🐵','🐧','🐲'];
+    if(!allowed.includes(avatar)) return;
+    this.userAvatar = avatar;
+    localStorage.setItem('agent6_avatar',avatar);
+    this.renderAvatarPicker();
+    this.renderProfile();
+    this.renderCommunity();
+    this.toast('Đã đổi avatar hồ sơ');
+  },
+
+  saveProfile(){
+    const value = document.getElementById('settingsName').value.trim();
+    if(!value){ this.toast('Tên không được để trống'); return; }
+    this.userName = value.slice(0,20);
+    localStorage.setItem('agent6_name',this.userName);
+    const name = document.getElementById('userName'); if(name) name.textContent = this.userName+' • '+TimeVN.clockString();
+    const hero = document.getElementById('heroName'); if(hero) hero.textContent = this.userName;
+    this.renderProfile(); this.toast('Đã lưu tên hiển thị');
+  },
+
+  renderCommunity(){
+    const el = document.getElementById('communityPosts');
+    if(!el) return;
+    const posts = JSON.parse(localStorage.getItem('agent6_posts') || '[]');
+    el.innerHTML = posts.length ? posts.map(p=>`<div class="feed-item"><div class="head"><div class="av">${this.userAvatar||'👤'}</div><span class="name">${this.esc(p.name)}</span><span class="time">${this.esc(p.date)}</span></div><div class="content">${this.esc(p.text)}</div></div>`).join('') : '<div class="empty">Chưa có bài chia sẻ. Viết bài đầu tiên nhé!</div>';
+  },
+  addPost(){
+    const input = document.getElementById('communityInput');
+    const text = input.value.trim();
+    if(!text){ this.toast('Nhập nội dung trước khi đăng'); return; }
+    const posts = JSON.parse(localStorage.getItem('agent6_posts') || '[]');
+    posts.unshift({name:this.userName,text,date:TimeVN.clockString()+' • '+TimeVN.shortDate(TimeVN.now())});
+    localStorage.setItem('agent6_posts',JSON.stringify(posts.slice(0,50)));
+    input.value=''; this.renderCommunity();
+  },
+
+  toggleSpeech(value){
+    const enabled = typeof value==='boolean' ? value : localStorage.getItem('agent6_speech')!=='true';
+    localStorage.setItem('agent6_speech',String(enabled));
+    const checkbox = document.getElementById('speechSetting'); if(checkbox) checkbox.checked=enabled;
+    const button = document.getElementById('btnSpeak'); if(button) button.classList.toggle('on',enabled);
+    this.toast(enabled?'Đã bật đọc phản hồi':'Đã tắt đọc phản hồi');
+  },
+  clearLocalData(){
+    if(!confirm('Xóa toàn bộ giờ học, điểm, kế hoạch, từ vựng và bài chia sẻ trên thiết bị này?')) return;
+    ['studyData','agent6_scores','agent6_weights','agent6_goals','agent6_vocab','agent6_posts'].forEach(key=>localStorage.removeItem(key));
+    this.loadStats(); this.loadToday(); this.loadChart(); this.loadSectionData();
+    this.toast('Đã xóa dữ liệu học tập');
+  },
+
+  deleteStudySession(index){
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    if(!Number.isInteger(index) || !data.sessions[index]) return;
+    if(!confirm('Xóa buổi học này khỏi lịch sử?')) return;
+    data.sessions.splice(index,1);
+    const days = [...new Set(data.sessions.map(session=>session.date))].map(value=>{
+      const [day,month,year] = value.split('/').map(Number);
+      return {value, time:Date.UTC(year,month-1,day)};
+    }).sort((a,b)=>a.time-b.time);
+    let streak = 0;
+    for(let i=days.length-1;i>=0;i--){
+      if(i===days.length-1 || days[i].time===days[i+1].time-86400000) streak++;
+      else break;
+    }
+    data.streaks = streak;
+    data.lastStudyDate = days.length ? days[days.length-1].value : null;
+    localStorage.setItem('studyData',JSON.stringify(data));
+    this.loadStats(); this.loadToday(); this.loadChart(); this.renderProfile();
+    this.toast('Đã xóa buổi học');
+  },
+
+  updateTimerDisplay(){
+    const display = document.getElementById('timerDisplay');
+    if(!display) return;
+    const seconds = Math.max(0,this.timerRemainingSeconds||0);
+    display.textContent = `${String(Math.floor(seconds/60)).padStart(2,'0')}:${String(seconds%60).padStart(2,'0')}`;
+  },
+  resetTimer(){
+    clearInterval(this.timerInterval);
+    this.timerInterval = null;
+    const input = document.getElementById('timerMinutes');
+    const minutes = Math.max(1,Math.min(180,parseInt(input.value,10)||25));
+    input.value = minutes;
+    this.timerRemainingSeconds = minutes*60;
+    this.updateTimerDisplay();
+    document.getElementById('timerStart').textContent = '▶ Bắt đầu';
+  },
+  startTimer(){
+    if(this.timerInterval !== null){
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+      document.getElementById('timerStart').textContent = '▶ Tiếp tục';
+      return;
+    }
+    if(this.timerRemainingSeconds === null || this.timerRemainingSeconds <= 0){
+      const input = document.getElementById('timerMinutes');
+      const minutes = parseInt(input.value,10);
+      if(!Number.isInteger(minutes) || minutes<1 || minutes>180){ this.toast('Thời lượng phải từ 1 đến 180 phút'); return; }
+      this.timerRemainingSeconds = minutes*60;
+    }
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(AudioCtx && !this.audioContext){
+      try{ this.audioContext = new AudioCtx(); }catch(e){}
+    }
+    if(this.audioContext && this.audioContext.state==='suspended') this.audioContext.resume();
+    document.getElementById('timerStart').textContent = '⏸ Tạm dừng';
+    this.updateTimerDisplay();
+    this.timerInterval = setInterval(()=>{
+      this.timerRemainingSeconds--;
+      this.updateTimerDisplay();
+      if(this.timerRemainingSeconds<=0){
+        clearInterval(this.timerInterval);
+        this.timerInterval = null;
+        document.getElementById('timerStart').textContent = '▶ Bắt đầu';
+        this.beepTimer();
+        this.toast('⏰ Hết giờ học!');
+      }
+    },1000);
+  },
+  beepTimer(){
+    if(!this.audioContext) return;
+    try{
+      const ctx = this.audioContext;
+      const start = ctx.currentTime;
+      [0,0.38].forEach(offset=>{
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 880;
+        gain.gain.setValueAtTime(0.001,start+offset);
+        gain.gain.exponentialRampToValueAtTime(0.25,start+offset+0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001,start+offset+0.22);
+        oscillator.connect(gain); gain.connect(ctx.destination);
+        oscillator.start(start+offset); oscillator.stop(start+offset+0.23);
+      });
+    }catch(e){ this.toast('Hết giờ! Không phát được âm thanh trên thiết bị này.'); }
+  },
+
+  quickLog(){
+    const modal = document.getElementById('gModal');
+    document.getElementById('gTitle').textContent = '⏱️ Ghi giờ học';
+    document.getElementById('gBody').innerHTML = `
+      <label>Môn</label>
+      <input type="text" id="qSub" class="field" value="Toán">
+      <label>Số phút</label>
+      <input type="number" id="qMin" class="field" value="30" min="1">
+      <button class="btn btn-blue btn-full" onclick="App.saveQuickLog()">Lưu</button>
+    `;
+    modal.classList.remove('hidden');
+  },
+
+  saveQuickLog(){
+    const s = document.getElementById('qSub').value.trim() || 'Khác';
+    const m = parseInt(document.getElementById('qMin').value) || 0;
+    if(m<=0) return alert('Nhập số phút > 0');
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const today = TimeVN.shortDate(TimeVN.now());
+    data.sessions.push({date: today, timestamp: Date.now(), minutes: m, subject: s});
+    if(data.lastStudyDate !== today){
+      data.streaks = (data.streaks||0) + 1;
+      data.lastStudyDate = today;
+    }
+    localStorage.setItem('studyData', JSON.stringify(data));
+    this.closeModal();
+    this.loadStats();
+    this.loadToday();
+    this.loadChart();
+    this.toast(`Đã ghi ${m} phút môn ${s}!`);
+  },
+
+  showStreakInfo(){
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const n = data.streaks||0;
+    document.getElementById('gTitle').textContent = '🔥 Chuỗi ngày học';
+    document.getElementById('gBody').innerHTML = `
+      <p style="font-size:15px;line-height:1.7">
+        Bạn đã học liên tục <b style="color:var(--yellow);font-size:20px">${n} ngày</b>.<br><br>
+        ${n===0?'Hãy bắt đầu hôm nay!':''}
+        ${n>0&&n<7?'Cố lên, 7 ngày đầu khó nhất!':''}
+        ${n>=7?'Tuyệt vời! Bạn đã vượt qua giai đoạn khó nhất 💪':''}
+      </p>
+    `;
+    document.getElementById('gModal').classList.remove('hidden');
+  },
+
+  suggest(){
+    const el = document.getElementById('suggest');
+    if(!el) return;
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const week = [];
+    for(let i=6;i>=0;i--){
+      const d = new Date(Date.now()-i*86400000);
+      const target = TimeVN.shortDate(new Date(d.getTime()));
+      week.push(data.sessions.filter(s=>s.date===target).reduce((a,b)=>a+b.minutes,0));
+    }
+    const total = week.reduce((a,b)=>a+b,0);
+    el.textContent = `📊 Chào ${this.userName}! Tuần này bạn học ${total} phút, chuỗi ${data.streaks||0} ngày.\n\n🕐 Bây giờ: ${TimeVN.clockString()} (GMT+7)\n🎯 Tiếp tục học nhé!`;
+    el.innerHTML = this.md(el.textContent);
+  },
+
+  refreshSuggest(){
+    this.suggest();
+    this.updateTodaySuggest();
+    this.toast('Đã làm mới!');
+  },
+
+  updateTodaySuggest(){
+    const el = document.getElementById('todaySuggest');
+    if(!el) return;
+    const h = TimeVN.hourNow();
+    const m = TimeVN.minuteNow();
+    const t = h + m/60;
+    let main = '', why = '', tip = '';
+    if(t >= 5 && t < 8.5){ main='🧮 Toán học'; why='Não minh mẫn nhất sáng sớm'; tip='💡 Uống nước ấm để não tỉnh táo.'; }
+    else if(t >= 8.5 && t < 11.5){ main='📖 Ngữ Văn'; why='Đọc hiểu phù hợp buổi sáng'; tip='💡 Ghi chú tóm tắt sau mỗi đoạn.'; }
+    else if(t >= 11.5 && t < 13.5){ main='📚 Ôn từ vựng'; why='Sau ăn não cần nghỉ'; tip='💡 Nghỉ 15 phút rồi học nhẹ.'; }
+    else if(t >= 13.5 && t < 17){ main='✏️ Luyện bài tập'; why='Buổi chiều tỉnh táo'; tip='💡 Pomodoro 45/10.'; }
+    else if(t >= 17 && t < 19){ main='☕ Nghỉ ngơi'; why='Giờ nghỉ'; tip='💡 Vận động nhẹ 5 phút.'; }
+    else if(t >= 19 && t < 22){ main='📝 Đọc lý thuyết'; why='Buổi tối yên tĩnh'; tip='💡 Đọc lại ghi chú trước ngủ 10 phút.'; }
+    else { main='😴 Chuẩn bị ngủ'; why='Não cần ngủ để ghi nhớ'; tip='💡 Tắt điện thoại 30 phút trước ngủ.'; }
+    el.innerHTML = `
+      <div style="font-size:14.5px;line-height:1.7">
+        <b style="color:var(--yellow)">⏰ LÚC ${TimeVN.clockString()} (GMT+7)</b><br>
+        <span style="font-size:18px;font-weight:900">${main}</span><br>
+        📌 ${why}<br>
+        ${tip}
+      </div>
+    `;
+    const sub = document.getElementById('heroSub');
+    if(sub) sub.textContent = `Gợi ý: ${main} — ${why}`;
+  },
+
+  async send(){
+    const inp = document.getElementById('chatInput');
+    const msg = inp.value.trim();
+    if(!msg) return;
+    inp.value = '';
+    this.pushMsg('me', msg);
+    const bub = this.pushMsg('ai', '<span class="typing"><i></i><i></i><i></i></span>', true);
+    let reply = await this.chat(msg);
+    const language = localStorage.getItem('agent6_language') || 'vi';
+    if(language==='en') reply = translateEnglish(reply);
+    bub.innerHTML = this.md(reply);
+    if(localStorage.getItem('agent6_speech') !== 'false' && 'speechSynthesis' in window){
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(reply.replace(/[*`]/g,''));
+      utterance.lang = language==='en' ? 'en-US' : 'vi-VN';
+      window.speechSynthesis.speak(utterance);
+    }
+  },
+
+  pushMsg(role, content, html=false){
+    const box = document.getElementById('chatBody');
+    const d = document.createElement('div');
+    d.className = 'msg ' + (role==='me'?'me':'ai');
+    const who = role==='me' ? (this.userAvatar || '👤') : '<span class="bot-six" role="img" aria-label="Bot số 6"><i class="seg a"></i><i class="seg b"></i><i class="seg c"></i><i class="seg d"></i><i class="seg e"></i><i class="seg f"></i><i class="seg g"></i></span>';
+    d.innerHTML = `<div class="who">${who}</div><div class="bub">${html?content:this.esc(content)}</div>`;
+    box.appendChild(d);
+    box.scrollTop = box.scrollHeight;
+    return d.querySelector('.bub');
+  },
+
+  async chat(msg){
+    const m = msg.toLowerCase();
+    const hour = TimeVN.hourNow();
+    const data = JSON.parse(localStorage.getItem('studyData')||'{"sessions":[],"streaks":0,"lastStudyDate":null,"gpaHistory":[]}');
+    const today = TimeVN.shortDate(TimeVN.now());
+    const todayMin = data.sessions.filter(s=>s.date===today).reduce((a,b)=>a+b.minutes,0);
+
+    if(m.includes('thói quen') || m.includes('phân tích')){
+      return `📊 **Phân tích thói quen học tập:**\n\n• 🔥 Chuỗi ngày: **${data.streaks||0}** ngày\n• ⏱️ Hôm nay: **${todayMin}** phút\n• 📈 Tổng: **${data.sessions.length}** buổi học\n\n${todayMin < 60 ? '⚠️ Cố đạt ít nhất 1-2 giờ/ngày nhé!' : '👍 Duy trì đều đặn là chìa khóa!'}`;
+    }
+    if(m.includes('chào') || m.includes('hello') || m.includes('hi')){
+      const g = hour < 12 ? 'Chào buổi sáng 🌅' : hour < 18 ? 'Chào buổi chiều ☀️' : 'Chào buổi tối 🌙';
+      return `${g}, ${this.userName}!\n\nBây giờ là **${TimeVN.clockString()}** (GMT+7).\n\nBạn muốn:\n• 📊 Phân tích thói quen?\n• 📚 Gợi ý môn học?\n• 💡 Giải bài?`;
+    }
+    if(m.includes('giờ') || m.includes('mấy giờ')){
+      return `🕐 Bây giờ là **${TimeVN.clockString()}** (GMT+7)\n📅 ${TimeVN.dateString()}`;
+    }
+    if(m.includes('động viên') || m.includes('buồn') || m.includes('mệt')){
+      return `❤️ Cố lên nhé I LOVE YOU BABY`;
+    }
+    return `🤖 Mình có thể giúp:\n• 📊 Phân tích thói quen học tập\n• 📚 Gợi ý môn học theo giờ GMT+7\n• 💡 Giải bài, động viên tinh thần\n\nHỏi mình bất cứ điều gì bạn nhé!`;
+  },
+
+  voice(){
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!SR){ alert('Trình duyệt không hỗ trợ nhận diện giọng nói.'); return; }
+    const r = new SR();
+    r.lang = 'vi-VN';
+    r.interimResults = true;
+    r.continuous = false;
+    this.rec = r;
+    const modal = document.getElementById('voiceModal');
+    const txt = document.getElementById('voiceText');
+    modal.classList.remove('hidden');
+    txt.textContent = 'Đang nghe...';
+    document.getElementById('micChat').classList.add('listening');
+    let finalText = '';
+    r.onresult = e => {
+      let t = '';
+      for(let i=e.resultIndex;i<e.results.length;i++){ t += e.results[i][0].transcript; if(e.results[i].isFinal) finalText += e.results[i][0].transcript; }
+      txt.textContent = t || 'Đang nghe...';
+    };
+    r.onerror = () => { txt.textContent = 'Lỗi'; setTimeout(()=>this.stopVoice(), 1500); };
+    r.onend = () => {
+      modal.classList.add('hidden');
+      document.getElementById('micChat').classList.remove('listening');
+      if(finalText.trim()){
+        this.go('chat');
+        setTimeout(()=>{ document.getElementById('chatInput').value = finalText; this.send(); }, 200);
+      }
+    };
+    try{ r.start(); }catch(e){ alert('Không khởi động được micro'); }
+  },
+  stopVoice(){
+    document.getElementById('voiceModal').classList.add('hidden');
+    document.getElementById('micChat').classList.remove('listening');
+    if(this.rec){ try{this.rec.stop()}catch(e){} }
+  },
+  closeModal(){
+    document.getElementById('gModal').classList.add('hidden');
+    document.getElementById('voiceModal').classList.add('hidden');
+  }
+};
+
+window.addEventListener('DOMContentLoaded', ()=>App.init());
+</script>
+</body>
+</html>
